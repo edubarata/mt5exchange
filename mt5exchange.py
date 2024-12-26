@@ -1,8 +1,5 @@
 import MetaTrader5 as mt5
 import pandas as pd
-#from binance.client import Client
-#from binance.enums import *
-import binance
 from datetime import datetime,timedelta
 
 class MTrader():
