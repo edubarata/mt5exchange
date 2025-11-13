@@ -12,7 +12,7 @@ class MTrader():
         if not self.client:
             print("Initialize() failed, error code =",mt5.last_error())
             self.error = True
-            #quit()
+            quit()
         else:
             self.error = False
 
@@ -239,18 +239,18 @@ class MTrader():
         df.drop(["spread"], axis=1,inplace=True)
         return df
 
-    def get_book(aelf, symbol):
+    def get_book_não_funciona(aelf, symbol):
         if mt5.market_book_add(symbol):
-            #print(f"Assinatura bem-sucedida do book de ofertas para {symbol}")
+            print(f"Assinatura bem-sucedida do book de ofertas para {symbol}")
             book = mt5.market_book_get(symbol)
-            #print(f'symbol: {symbol}')
-            #print('book:')
-            #print(book)
-            #if book is None:
-            #    print("Erro ao obter o book:", mt5.last_error())
-            #for level in book:
-            #    print(level._asdict())
-            #print("-" * 40)
+            print(f'symbol: {symbol}')
+            print('book:')
+            print(book)
+            if book is None:
+                print("Erro ao obter o book:", mt5.last_error())
+            for level in book:
+                print(level._asdict())
+            print("-" * 40)
 
             mt5.market_book_release(symbol)
         else:
