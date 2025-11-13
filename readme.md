@@ -12,4 +12,4 @@ Versão da biblioteca Pandas 2.2.3
 
 - corrigir a função positions para que ela devolva um array com as posições
 - Verificar qual a diferença entre read_candles e read_OHLC e eliminar uma delas se forem iguais
-- 
+- Testar as ordens
