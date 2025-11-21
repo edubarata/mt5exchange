@@ -3,7 +3,7 @@ from passwords import mt5_cleardemo_password
 from passwords import mt5_Genial_DayTrade_password
 from passwords import mt5_Genial_SwingTrade_password
 from passwords import mt5_infinox_live
-from mt5exchange import MTrader
+from metatrader5.mt5exchange import MTrader
 
 
 

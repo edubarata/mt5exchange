@@ -1,3 +1,4 @@
+#version = 0.1.0
 import MetaTrader5 as mt5
 import pandas as pd
 
@@ -17,6 +18,13 @@ class MTrader():
     def symbol_select(self, symbol):
         result = mt5.symbol_select(symbol, True)
         return result
+
+    def read_all_info(self,papel):
+        symbol_info=mt5.symbol_info(papel)
+        if symbol_info!=None:
+            return symbol_info
+        else:
+            return None
 
     def read_info(self,papel):
         symbol_info=mt5.symbol_info(papel)
