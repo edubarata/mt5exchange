@@ -8,7 +8,7 @@ Versão da biblioteca MetaTrader5: 5.0.5200
 
 Versão da biblioteca Pandas 2.2.3
 
-Instalação: pip install git+https://github.com/edubarata/metatrader5.git
+Instalação: pip install git+https://github.com/edubarata/mt5exchange.git
 
 # Pendências:
 
