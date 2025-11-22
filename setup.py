@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="metatrader5",
+    name="mt5exchange",
     version="0.1.0",
     packages=find_packages(),
     install_requires=[
@@ -10,5 +10,5 @@ setup(
     ],
     author="Eduardo Barata",
     description="Interface Python personalizada para operações com MetaTrader 5",
-    url="https://github.com/edubarata/metatrader5",
+    url="https://github.com/edubarata/mt5exchange",
 )
