@@ -8,6 +8,8 @@ Versão da biblioteca MetaTrader5: 5.0.5200
 
 Versão da biblioteca Pandas 2.2.3
 
+Instalação: pip install git+https://github.com/edubarata/metatrader5.git
+
 # Pendências:
 
 - corrigir a função positions para que ela devolva um array com as posições
