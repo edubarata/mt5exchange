@@ -1,14 +1,16 @@
-#version = 0.1.0
+VERSION = "0.1.1"
 import MetaTrader5 as mt5
 import pandas as pd
 
 class MTrader():
-    def __init__(self,servidor,user_login,senha,verbose=True):
+    def __init__(self,servidor,user_login,senha,verbose=True, log_debug=False):
         if verbose:
+            print(f"mt5exchange - Version {VERSION}{' - log para debug ativado' if log_debug else ''}")
             print("Estabelecendo Conexão com Metatrader 5:")
             print("  Server: "+servidor)
             print("  Login:  "+str(user_login))
         self.client = mt5.initialize(login=user_login,server=servidor,password=senha)
+        self.log_debug = log_debug
         if not self.client:
             print("Initialize() failed, error code =",mt5.last_error())
             self.error = True
@@ -16,11 +18,15 @@ class MTrader():
             self.error = False
 
     def symbol_select(self, symbol):
+        if self.log_debug: print(f"função symbol_select, input: {symbol}")
         result = mt5.symbol_select(symbol, True)
+        if self.log_debug: print(f"função symbol_select, mt5.symbol_select({symbol}, True): {result}")
         return result
 
     def read_all_info(self,papel):
+        if self.log_debug: print(f"função read_all_info, input: {papel}")
         symbol_info=mt5.symbol_info(papel)
+        if self.log_debug: print(f"função read_all_info, mt5.symbol_info({papel}): {symbol_info}")
         if symbol_info!=None:
             return symbol_info
         else:
