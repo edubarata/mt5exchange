@@ -1,4 +1,4 @@
-VERSION = "0.1.1"
+VERSION = "0.1.3"
 import MetaTrader5 as mt5
 import pandas as pd
 
