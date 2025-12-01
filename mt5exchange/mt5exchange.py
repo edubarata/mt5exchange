@@ -142,7 +142,9 @@ class MTrader():
             '15m': mt5.TIMEFRAME_M15,
             '30m': mt5.TIMEFRAME_M30,
             '1h':  mt5.TIMEFRAME_H1,
-            '1d':  mt5.TIMEFRAME_D1
+            '1d':  mt5.TIMEFRAME_D1,
+            '1w':  mt5.TIMEFRAME_W1,
+            '1M':  mt5.TIMEFRAME_MN1
         }
         n = n + 1
         timef = dictionary[tf]
@@ -176,10 +178,15 @@ class MTrader():
         # n = 1 (last closed candle)
         # n = 2.. (las 2.. closed candles)
         dictionary = {
-            '1m':mt5.TIMEFRAME_M1,
-            '5m':mt5.TIMEFRAME_M5,
-            '1h':mt5.TIMEFRAME_H1,
-            '1d':mt5.TIMEFRAME_D1
+            '1m':  mt5.TIMEFRAME_M1,
+            '2m':  mt5.TIMEFRAME_M2,
+            '5m':  mt5.TIMEFRAME_M5,
+            '15m': mt5.TIMEFRAME_M15,
+            '30m': mt5.TIMEFRAME_M30,
+            '1h':  mt5.TIMEFRAME_H1,
+            '1d':  mt5.TIMEFRAME_D1,
+            '1w':  mt5.TIMEFRAME_W1,
+            '1M':  mt5.TIMEFRAME_MN1
         }
         n = n + 1
         timef = dictionary[tf]
