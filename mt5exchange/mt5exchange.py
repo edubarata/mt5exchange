@@ -1,4 +1,4 @@
-VERSION = "0.1.3"
+VERSION = "0.1.4"
 import MetaTrader5 as mt5
 import pandas as pd
 
@@ -7,8 +7,8 @@ class MTrader():
         if verbose:
             print(f"mt5exchange - Version {VERSION}{' - log para debug ativado' if log_debug else ''}")
             print("Estabelecendo Conexão com Metatrader 5:")
-            print("  Server: "+servidor)
-            print("  Login:  "+str(user_login))
+            print(f"  ServeR: {servidor}")
+            print(f"  Login:  {str(user_login)}")
         self.client = mt5.initialize(login=user_login,server=servidor,password=senha)
         self.log_debug = log_debug
         if not self.client:
@@ -18,9 +18,11 @@ class MTrader():
             self.error = False
 
     def symbol_select(self, symbol):
-        if self.log_debug: print(f"função symbol_select, input: {symbol}")
+        if self.log_debug:
+            print(f"função symbol_select, input: {symbol}")
         result = mt5.symbol_select(symbol, True)
-        if self.log_debug: print(f"função symbol_select, mt5.symbol_select({symbol}, True): {result}")
+        if self.log_debug:
+            print(f"função symbol_select, mt5.symbol_select({symbol}, True): {result}")
         return result
 
     def read_all_info(self,papel):
@@ -46,9 +48,144 @@ class MTrader():
         current_open = rates[1][1]
         return last_close, current_open, current_value
 
-    def read_positions(self,ativo):
+    def order_old(self,buy_sell, symbol, volume):
+        slippage = 5  # Slippage permitido em pontos
+        magic_number = 434343  # Número mágico para identificar a ordem
+
+        terminal = mt5.terminal_info()
+        print(f"Terminal conectado: {terminal.connected}, trade_allowed: {terminal.trade_allowed}")
+
+
+        # Obter preço atual de mercado
+        symbol_info = mt5.symbol_info(symbol)
+        if symbol_info is None:
+            print(f"Símbolo {symbol} não encontrado")
+            mt5.shutdown()
+            exit()
+
+        #price = mt5.symbol_info_tick(symbol).ask  # Preço de compra (ask)
+        # Criar a solicitação de compra
+        order_request = {
+            "action": mt5.TRADE_ACTION_DEAL,  # Ordem a mercado
+            "symbol": symbol,
+            "volume": volume,
+            "type": mt5.ORDER_TYPE_BUY if buy_sell == 'buy' else mt5.ORDER_TYPE_SELL,  # Compra
+            #"price": price,
+            "price": symbol_info.ask,
+            "slippage": slippage,
+            "magic": magic_number,
+            "comment": "Ordem de compra via mt5ai",
+            "type_filling": mt5.ORDER_FILLING_IOC,  # Imediato ou cancelar
+            "type_time": mt5.ORDER_TIME_GTC,  # Válida até cancelamento
+        }
+
+        # Enviar a ordem
+        order_result = mt5.order_send(order_request)
+        print(f"resposta do order: {order_result}")
+        # Verificar resultado da ordem
+        #if order_result.retcode == mt5.TRADE_RETCODE_DONE:
+        #    print(f"Ordem de compra executada com sucesso! Ticket: {order_result.order}")
+        #else:
+        #    print(f"Falha ao enviar ordem: {order_result.retcode}")
+        
+        return order_result
+
+    def order(self, buy_sell, symbol, volume, price=0.0):
+        # 1. Verificar conexão com MT5
+        if not mt5.initialize():
+            print(f"MT5 não inicializado: {mt5.last_error()}")
+            return None
+
+        # 2. Verificar terminal info
+        terminal = mt5.terminal_info()
+        print(f"Terminal conectado: {terminal.connected}, trade_allowed: {terminal.trade_allowed}")
+
+        # 3. Verificar símbolo
+        symbol_info = mt5.symbol_info(symbol)
+        if symbol_info is None:
+            print(f"Símbolo {symbol} não encontrado: {mt5.last_error()}")
+            return None
+        
+        print(f"Symbol trade_mode: {symbol_info.trade_mode}")
+        print(f"Ask: {symbol_info.ask}, Bid: {symbol_info.bid}")
+
+        # 4. Garantir que o símbolo está visível no Market Watch
+        if not symbol_info.visible:
+            if not mt5.symbol_select(symbol, True):
+                print(f"Falha ao selecionar símbolo: {mt5.last_error()}")
+                return None
+        slippage             = 5
+        magic_number         = 434343
+
+        action_mercado       = mt5.TRADE_ACTION_DEAL
+        action_stop          = mt5.TRADE_ACTION_PENDING
+        action_limit         = mt5.TRADE_ACTION_PENDING
+        
+        type_filling_mercado = mt5.ORDER_FILLING_IOC
+        type_filling_stop    = mt5.ORDER_FILLING_RETURN
+        type_filling_limit   = mt5.ORDER_FILLING_RETURN
+
+        type_time_mercado    = mt5.ORDER_TIME_GTC
+        type_time_stop       = mt5.ORDER_TIME_DAY
+        type_time_limit      = mt5.ORDER_TIME_DAY
+
+        symbol_info = mt5.symbol_info(symbol)
+        print(f"SYMBOL INFO: {symbol_info.expiration_mode}")
+
+        if buy_sell in ['buy', 'sell']:
+            order_request = {
+                "action": action_mercado,
+                "symbol": symbol,
+                "volume": float(volume),  # garantir que é float
+                "type": mt5.ORDER_TYPE_BUY if buy_sell == 'buy' else mt5.ORDER_TYPE_SELL,
+                "price": symbol_info.ask if buy_sell == 'buy' else symbol_info.bid,
+                "slippage": slippage,
+                "magic": magic_number,
+                "comment": f"Ordem mercado mt5exchan 0.1.4",
+                "type_filling": type_filling_mercado,
+                "type_time": type_time_mercado,
+            }
+        elif buy_sell in ['buy_stop', 'sell_stop']:
+            order_request = {
+                "action": action_stop,
+                "symbol": symbol,
+                "volume": float(volume),  # garantir que é float
+                "type": mt5.ORDER_TYPE_BUY_STOP if buy_sell == 'buy_stop' else mt5.ORDER_TYPE_SELL_STOP,
+                "price": float(price),
+                "slippage": slippage,
+                "magic": magic_number,
+                "comment": f"Ordem stop mt5exchan 0.1.4",
+                "type_filling": type_filling_stop,
+                "type_time": type_time_stop,
+            }
+        elif buy_sell in ['buy_limit', 'sell_limit']:
+            order_request = {
+                "action": action_limit,
+                "symbol": symbol,
+                "volume": float(volume),  # garantir que é float
+                "type": mt5.ORDER_TYPE_BUY_LIMIT if buy_sell == 'buy_limit' else mt5.ORDER_TYPE_SELL_LIMIT,
+                "price": float(price),
+                "slippage": slippage,
+                "magic": magic_number,
+                "comment": f"Ordem limit mt5exchan 0.1.4",
+                "type_filling": type_filling_limit,
+                "type_time": type_time_limit,
+            }
+
+        print(f"Enviando order_request: {order_request}")
+        order_result = mt5.order_send(order_request)
+        
+        if order_result is None:
+            print(f"order_send retornou None. last_error: {mt5.last_error()}")
+        else:
+            print(f"retcode: {order_result.retcode}, comment: {order_result.comment}")
+
+        return order_result
+
+    def read_positions(self, ativo):
         position = Position()
         aux = mt5.positions_get(symbol=ativo)
+        print(f"===== len = {len(aux)}, aux = {aux}")
         for i in range(len(aux)):
             position.ticket          = aux[0][0]
             position.time            = str(pd.to_datetime(aux[0][1],unit='s'))[11:]
@@ -71,21 +208,12 @@ class MTrader():
             position.external_id     = aux[0][18]
         return position
 
-    def read_position(self,ativo):
+    def read_position(self, ativo):
         info_posicoes = mt5.positions_get(symbol=ativo)
-        print(info_posicoes)
-        try:
-            if len(info_posicoes) == 0:
-                df = pd.DataFrame()
-                return df
-        except:
-            print('Programa Terminado por erro')
-            df = pd.DataFrame()
-            return df
-
-        df = pd.DataFrame(list(info_posicoes),columns=info_posicoes[0]._asdict().keys())
-        df ['time'] = pd.to_datetime (df ['time'], unit='s')
-        return df
+        if len(info_posicoes) == 0:
+            return {}
+        posicao_dic = info_posicoes[0]._asdict()
+        return posicao_dic
 
     def verify_position(self,ativo,position_verify):
         position = Position()
@@ -94,10 +222,10 @@ class MTrader():
             return True,aux[0].price_open,aux[0].sl,aux[0].tp
         return False,0,0,0
 
-    def read_order(self,ativo):
+    def read_orders(self,ativo):
         order = Order()
         aux = mt5.orders_get(symbol=ativo)
-        print(aux)
+        print(f"orders_get: {aux}")
         for i in range(len(aux)):
             order.len             = aux[0][0]
             order.status          = str(pd.to_datetime(aux[0][1],unit='s'))[11:]
@@ -178,15 +306,15 @@ class MTrader():
         # n = 1 (last closed candle)
         # n = 2.. (las 2.. closed candles)
         dictionary = {
-            '1m':  mt5.TIMEFRAME_M1,
-            '2m':  mt5.TIMEFRAME_M2,
-            '5m':  mt5.TIMEFRAME_M5,
-            '15m': mt5.TIMEFRAME_M15,
-            '30m': mt5.TIMEFRAME_M30,
-            '1h':  mt5.TIMEFRAME_H1,
-            '1d':  mt5.TIMEFRAME_D1,
-            '1w':  mt5.TIMEFRAME_W1,
-            '1M':  mt5.TIMEFRAME_MN1
+            '1m'    : mt5.TIMEFRAME_M1,
+            '2m'    : mt5.TIMEFRAME_M2,
+            '5m'    : mt5.TIMEFRAME_M5,
+            '15m'   : mt5.TIMEFRAME_M15,
+            '30m'   : mt5.TIMEFRAME_M30,
+            '1h'    : mt5.TIMEFRAME_H1,
+            '1d'    : mt5.TIMEFRAME_D1,
+            '1w'    : mt5.TIMEFRAME_W1,
+            '1M'    : mt5.TIMEFRAME_MN1
         }
         n = n + 1
         timef = dictionary[tf]
@@ -205,45 +333,6 @@ class MTrader():
         else:
             print("Erro ao assinar o book de ofertas:", mt5.last_error())
         return book
-
-    def order(self,buy_sell, symbol, volume):
-        slippage = 5  # Slippage permitido em pontos
-        magic_number = 434343  # Número mágico para identificar a ordem
-
-        # Obter preço atual de mercado
-        symbol_info = mt5.symbol_info(symbol)
-        if symbol_info is None:
-            print(f"Símbolo {symbol} não encontrado")
-            mt5.shutdown()
-            exit()
-
-        #price = mt5.symbol_info_tick(symbol).ask  # Preço de compra (ask)
-
-        # Criar a solicitação de compra
-        order_request = {
-            "action": mt5.TRADE_ACTION_DEAL,  # Ordem a mercado
-            "symbol": symbol,
-            "volume": volume,
-            "type": mt5.ORDER_TYPE_BUY if buy_sell == 'buy' else mt5.ORDER_TYPE_SELL,  # Compra
-            #"price": price,
-            "price": symbol_info.ask,
-            "slippage": slippage,
-            "magic": magic_number,
-            "comment": "Ordem de compra via mt5ai",
-            "type_filling": mt5.ORDER_FILLING_IOC,  # Imediato ou cancelar
-            "type_time": mt5.ORDER_TIME_GTC,  # Válida até cancelamento
-        }
-
-        # Enviar a ordem
-        order_result = mt5.order_send(order_request)
-
-        # Verificar resultado da ordem
-        #if order_result.retcode == mt5.TRADE_RETCODE_DONE:
-        #    print(f"Ordem de compra executada com sucesso! Ticket: {order_result.order}")
-        #else:
-        #    print(f"Falha ao enviar ordem: {order_result.retcode}")
-        
-        return order_result
 
     def close_orders(self, verbose=False):
         positions = mt5.positions_get()
@@ -301,6 +390,10 @@ class MTrader():
         #else:
         #    print(f"Erro ao fechar posição {ticket}: {close_result.retcode}")
         return close_result
+
+    def get_account_info(self):
+        info = mt5.account_info()
+        return info
 
 class Position:
     def __init__(self):
