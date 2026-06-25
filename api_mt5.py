@@ -15,7 +15,7 @@ CORS(app)
 server,login,password = mt5_clear_password()
 conn = MTrader(server,login,password,log_debug=False)
 
-def symbol_info_to_dict(info):
+def symbol_info_to_dict_old(info):
     if info is None:
         return None
     return {
@@ -141,6 +141,11 @@ def symbol_info_to_dict(info):
         "page": info.page,
         "path": info.path
     }
+
+def symbol_info_to_dict(info):
+    if info is None:
+        return None
+    return info._asdict()
 
 @app.route('/symbol_select', methods=['GET']) #done
 def symbol_select():

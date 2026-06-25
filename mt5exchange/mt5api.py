@@ -48,7 +48,8 @@ class MT5api():
         url = f"{BASE_URL}/read_candles"
         params = {"symbol": symbol, "tf": tf, "n": n}
         response = requests.get(url, params=params)
-        df = pd.DataFrame(response.json()["result"])
+        response_dict = response.json()["result"]
+        df = pd.DataFrame(response_dict)
         df["time"] = pd.to_datetime(df["time"])
         df.set_index("time", inplace=True)
         return df
