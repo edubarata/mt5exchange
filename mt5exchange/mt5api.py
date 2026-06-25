@@ -141,8 +141,42 @@ class MT5api():
         url = f"{BASE_URL}/get_account_info"
         params = {}
         response = requests.get(url)
+        #print(f"Response: {response}")
+        #print(f"")
         dic = response.json()["result"]
         return dic
+
+
+    def get_account_info_teste(self):
+        url = f"{BASE_URL}/get_account_info"
+        params = {}
+        response = requests.get(url)
+        print("\n[DEBUG] --- TENTANDO LER DADOS DO MT5 ---")
+        print(f"[DEBUG] Status da Resposta: {response.status_code}")
+        print(f"[DEBUG] Conteúdo Recebido: '{response.text}'")
+        
+        # Se a resposta for vazia ou erro HTTP, injeta um dicionário falso seguro
+        if response.status_code != 200 or not response.text.strip():
+            print("[DEBUG] Resposta inválida da API. Retornando saldo zerado de segurança.")
+            return {"balance": 0.0}
+
+        try:
+            # Tenta decodificar o JSON
+            dados_json = response.json()
+            
+            # Se a API envelopar o resultado em uma chave "result", extrai ela
+            if isinstance(dados_json, dict) and "result" in dados_json:
+                return dados_json["result"]
+                
+            return dados_json
+        except Exception as e:
+            print(f"[DEBUG] Erro crítico ao decodificar o JSON: {e}")
+            return {"balance": 0.0}
+
+
+
+
+
 
 class Position:
     def __init__(self):
