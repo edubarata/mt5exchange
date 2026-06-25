@@ -393,7 +393,8 @@ class MTrader():
 
     def get_account_info(self):
         info = mt5.account_info()
-        return info
+        info_dict = info._asdict()
+        return info_dict
 
 class Position:
     def __init__(self):
