@@ -84,7 +84,6 @@ class MT5api():
         }
 
     def order(self, buy_sell, symbol, volume, price):
-        #print(f"Na função mt5api.py: buy_sell={buy_sell}, symbol={symbol}, volume={volume}, price={price}")
         url = f"{BASE_URL}/order"
         params = {"buy_sell": buy_sell ,"symbol": symbol, "volume": volume, "price": price}
         response = requests.get(url, params=params)

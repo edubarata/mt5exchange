@@ -150,9 +150,7 @@ def symbol_info_to_dict(info):
 @app.route('/symbol_select', methods=['GET']) #done
 def symbol_select():
     symbol    = request.args.get("symbol")
-    print(f"symbollll 1: ({symbol})")
     symbol = symbol.upper()
-    print(f"symbollll 2: ({symbol})")
     resultado = conn.symbol_select(symbol)
     return jsonify({
         "result": resultado
@@ -200,19 +198,13 @@ def read_OHLC():
 
 @app.route('/order', methods=['GET'])
 def order():
-    print(f"====== Dentro do /order")
     buy_sell = request.args.get("buy_sell")
     symbol   = request.args.get("symbol")
-    print("ZZ00")
     volume_aux = request.args.get("volume")
-    print(f"ZZ01 - {volume_aux}")
     volume   = float(volume_aux)
-    print('ZZ02')
     price    = float(request.args.get("price"))
-    print(f"Na função api_mt5.py: buy_sell={buy_sell}, symbol={symbol}, VOlume={volume}, price={price}")
     symb_sel_result = conn.symbol_select(symbol)
     order_result    = conn.order(buy_sell, symbol, volume, price)
-
     return jsonify({
         "symb_sel_result" : symb_sel_result,
         "order_result"    : order_result
@@ -221,16 +213,11 @@ def order():
 @app.route('/read_orders', methods=['GET'])
 def read_orders():
     symbol   = request.args.get("symbol")
-    print(f"=====>> Na função api_mt5.py: symbol={symbol}")
     symb_sel_result    = conn.symbol_select(symbol)
     read_orders_result = conn.read_orders(symbol)
-    print(f"=========================> read_orders_result: {read_orders_result}")
     resultado = []
     for order in read_orders_result:
-        print(f"----> order: {order}")
         resultado.append(order._asdict())
-    print(f"=========================> resultado: {resultado}")
-
     return jsonify({
         "symb_sel_result" : symb_sel_result,
         "order_result"    : read_orders_result

@@ -30,11 +30,9 @@ class MTrader():
 
 
     def symbol_select(self, symbol):
-        if self.log_debug:
-            print(f"função symbol_select, input: {symbol}")
+        if self.log_debug: print(f"função symbol_select, input: {symbol}")
         result = mt5.symbol_select(symbol, True)
-        if self.log_debug:
-            print(f"função symbol_select, mt5.symbol_select({symbol}, True): {result}")
+        if self.log_debug: print(f"função symbol_select, mt5.symbol_select({symbol}, True): {result}")
         return result
 
     def read_all_info(self,papel):
@@ -110,7 +108,6 @@ class MTrader():
 
         # 2. Verificar terminal info
         terminal = mt5.terminal_info()
-        print(f"Terminal conectado: {terminal.connected}, trade_allowed: {terminal.trade_allowed}")
 
         # 3. Verificar símbolo
         symbol_info = mt5.symbol_info(symbol)
@@ -118,9 +115,6 @@ class MTrader():
             print(f"Símbolo {symbol} não encontrado: {mt5.last_error()}")
             return None
         
-        print(f"Symbol trade_mode: {symbol_info.trade_mode}")
-        print(f"Ask: {symbol_info.ask}, Bid: {symbol_info.bid}")
-
         # 4. Garantir que o símbolo está visível no Market Watch
         if not symbol_info.visible:
             if not mt5.symbol_select(symbol, True):
@@ -142,7 +136,6 @@ class MTrader():
         type_time_limit      = mt5.ORDER_TIME_DAY
 
         symbol_info = mt5.symbol_info(symbol)
-        print(f"SYMBOL INFO: {symbol_info.expiration_mode}")
 
         if buy_sell in ['buy', 'sell']:
             order_request = {
@@ -184,20 +177,20 @@ class MTrader():
                 "type_time": type_time_limit,
             }
 
-        print(f"Enviando order_request: {order_request}")
         order_result = mt5.order_send(order_request)
         
         if order_result is None:
-            print(f"order_send retornou None. last_error: {mt5.last_error()}")
+            pass
+            #print(f"order_send retornou None. last_error: {mt5.last_error()}")
         else:
-            print(f"retcode: {order_result.retcode}, comment: {order_result.comment}")
+            pass
+            #print(f"retcode: {order_result.retcode}, comment: {order_result.comment}")
 
         return order_result
 
     def read_positions(self, ativo):
         position = Position()
         aux = mt5.positions_get(symbol=ativo)
-        print(f"===== len = {len(aux)}, aux = {aux}")
         for i in range(len(aux)):
             position.ticket          = aux[0][0]
             position.time            = str(pd.to_datetime(aux[0][1],unit='s'))[11:]
@@ -237,7 +230,6 @@ class MTrader():
     def read_orders(self,ativo):
         order = Order()
         aux = mt5.orders_get(symbol=ativo)
-        print(f"orders_get: {aux}")
         for i in range(len(aux)):
             order.len             = aux[0][0]
             order.status          = str(pd.to_datetime(aux[0][1],unit='s'))[11:]
