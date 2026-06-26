@@ -16,6 +16,18 @@ class MTrader():
             self.error = True
         else:
             self.error = False
+        self.dictionary_tf = {
+            '1m'    : mt5.TIMEFRAME_M1,
+            '2m'    : mt5.TIMEFRAME_M2,
+            '5m'    : mt5.TIMEFRAME_M5,
+            '15m'   : mt5.TIMEFRAME_M15,
+            '30m'   : mt5.TIMEFRAME_M30,
+            '1h'    : mt5.TIMEFRAME_H1,
+            '1d'    : mt5.TIMEFRAME_D1,
+            '1w'    : mt5.TIMEFRAME_W1,
+            '1M'    : mt5.TIMEFRAME_MN1
+        }
+
 
     def symbol_select(self, symbol):
         if self.log_debug:
@@ -263,19 +275,8 @@ class MTrader():
         tamanho_bloco = 99998
         n_blocos = n//tamanho_bloco
         residual = n % tamanho_bloco
-        dictionary = {
-            '1m':  mt5.TIMEFRAME_M1,
-            '2m':  mt5.TIMEFRAME_M2,
-            '5m':  mt5.TIMEFRAME_M5,
-            '15m': mt5.TIMEFRAME_M15,
-            '30m': mt5.TIMEFRAME_M30,
-            '1h':  mt5.TIMEFRAME_H1,
-            '1d':  mt5.TIMEFRAME_D1,
-            '1w':  mt5.TIMEFRAME_W1,
-            '1M':  mt5.TIMEFRAME_MN1
-        }
         n = n + 1
-        timef = dictionary[tf]
+        timef = self.dictionary_tf[tf]
         if n_blocos>0:
             df = pd.DataFrame(mt5.copy_rates_from_pos(symbol, timef, (n_blocos-1)*tamanho_bloco+residual, tamanho_bloco))
             for i in range(n_blocos-1):
@@ -305,19 +306,8 @@ class MTrader():
         # n = 0 (last open candle)
         # n = 1 (last closed candle)
         # n = 2.. (las 2.. closed candles)
-        dictionary = {
-            '1m'    : mt5.TIMEFRAME_M1,
-            '2m'    : mt5.TIMEFRAME_M2,
-            '5m'    : mt5.TIMEFRAME_M5,
-            '15m'   : mt5.TIMEFRAME_M15,
-            '30m'   : mt5.TIMEFRAME_M30,
-            '1h'    : mt5.TIMEFRAME_H1,
-            '1d'    : mt5.TIMEFRAME_D1,
-            '1w'    : mt5.TIMEFRAME_W1,
-            '1M'    : mt5.TIMEFRAME_MN1
-        }
         n = n + 1
-        timef = dictionary[tf]
+        timef = self.dictionary_tf[tf]
         df = pd.DataFrame(mt5.copy_rates_from_pos(symbol, timef, 0, n))
         df = df.rename({'real_volume': 'volume'}, axis=1)
         df['volume'] = df['volume'].astype(float)

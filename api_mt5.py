@@ -183,7 +183,7 @@ def read_candles():
 def get_account_info():
     resultado = conn.get_account_info()
     return jsonify({
-        "result": resultado._asdict()
+        "result": resultado
     })
 
 @app.route('/read_OHLC', methods=['GET']) #done

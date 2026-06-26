@@ -51,7 +51,9 @@ class MT5api():
         response_dict = response.json()["result"]
         df = pd.DataFrame(response_dict)
         df["time"] = pd.to_datetime(df["time"])
-        df.set_index("time", inplace=True)
+        df["volume"] = df["volume"].astype(float)
+        df["tick_volume"] = df["tick_volume"].astype(float)
+        #df.set_index("time", inplace=True)
         return df
 
     def read_OHLC(self,symbol,tf,n=1):
@@ -142,8 +144,6 @@ class MT5api():
         url = f"{BASE_URL}/get_account_info"
         params = {}
         response = requests.get(url)
-        #print(f"Response: {response}")
-        #print(f"")
         dic = response.json()["result"]
         return dic
 
