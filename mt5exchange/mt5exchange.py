@@ -308,6 +308,15 @@ class MTrader():
         df.drop(["spread"], axis=1,inplace=True)
         return df
 
+    def read_ticks(self, symbol, start_time, end_time):
+        ticks = mt5.copy_ticks_range(
+            symbol,
+            start_time,
+            end_time,
+            mt5.COPY_TICKS_ALL
+        )
+        return ticks
+
     def get_book(self, symbol):
         if mt5.market_book_add(symbol):
             book = mt5.market_book_get(symbol)

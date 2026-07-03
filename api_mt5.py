@@ -177,6 +177,18 @@ def read_candles():
         "result": resultado.to_dict(orient='records')
     })
 
+@app.route('/read_ticks', methods=['GET']) #done
+def read_ticks():
+    symbol = request.args.get("symbol")
+    start_time = request.args.get("start_time")
+    end_time = request.args.get("end_time")
+    conn.symbol_select(symbol)
+    resultado = conn.read_ticks(symbol, start_time, end_time)
+    resultado['time'] = resultado['time'].astype(str)
+    return jsonify({
+        "result": resultado.to_dict(orient='records')
+    })
+
 @app.route('/get_account_info', methods=['GET']) #done
 def get_account_info():
     resultado = conn.get_account_info()
