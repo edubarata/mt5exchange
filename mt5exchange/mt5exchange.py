@@ -309,6 +309,7 @@ class MTrader():
         return df
 
     def read_ticks(self, symbol, start_time, end_time):
+        print("read_ticks em mt5exchange")
         ticks = mt5.copy_ticks_range(
             symbol,
             start_time,
