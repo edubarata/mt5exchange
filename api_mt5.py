@@ -7,7 +7,6 @@ from passwords import mt5_clear_password
 from mt5exchange.mt5exchange import MTrader
 import MetaTrader5 as mt5
 from flask_cors import CORS
-from datetime import datetime
 import time
 app = Flask(__name__)
 CORS(app)
@@ -180,14 +179,19 @@ def read_candles():
 @app.route('/read_ticks', methods=['GET']) #done
 def read_ticks():
     symbol = request.args.get("symbol")
-    start_time = request.args.get("start_time")
-    end_time = request.args.get("end_time")
+    start_time = datetime.strptime(request.args.get("start_time"), '%Y-%m-%d %H:%M:%S')
+    end_time =   datetime.strptime(request.args.get("end_time"),   '%Y-%m-%d %H:%M:%S')
     conn.symbol_select(symbol)
     resultado = conn.read_ticks(symbol, start_time, end_time)
-    resultado['time'] = resultado['time'].astype(str)
+    df = pd.DataFrame(resultado)
+    df['time'] = pd.to_datetime(df['time'], unit='s')
+    df['time'] = pd.to_datetime(df['time'], unit='s')
+    df["volume"] = df["volume"].astype(float)
+    #df["tick_volume"] = df["tick_volume"].astype(float)
+    resultado_json = df.to_dict(orient="records")
     return jsonify({
-        "result": resultado.to_dict(orient='records')
-    })
+        "result": resultado_json
+})
 
 @app.route('/get_account_info', methods=['GET']) #done
 def get_account_info():

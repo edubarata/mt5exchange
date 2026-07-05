@@ -56,16 +56,18 @@ class MT5api():
         #df.set_index("time", inplace=True)
         return df
 
-    def read_ticks(self,symbol,start_time,end_time): #done
+    def read_ticks(self,symbol,start_time,end_time):
         url = f"{BASE_URL}/read_ticks"
         params = {"symbol": symbol, "start_time": start_time, "end_time": end_time}
         response = requests.get(url, params=params)
         response_dict = response.json()["result"]
         df = pd.DataFrame(response_dict)
-        df["time"] = pd.to_datetime(df["time"])
-        df["volume"] = df["volume"].astype(float)
-        df["tick_volume"] = df["tick_volume"].astype(float)
-        #df.set_index("time", inplace=True)
+        try:
+            df["time"] = pd.to_datetime(df["time"])
+            df["volume"] = df["volume"].astype(float)
+            #df.set_index("time", inplace=True)
+        except:
+            pass
         return df
 
     def read_OHLC(self,symbol,tf,n=1):
