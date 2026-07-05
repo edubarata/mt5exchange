@@ -309,21 +309,14 @@ class MTrader():
         return df
 
     def read_ticks(self, symbol, start_time, end_time):
-        print(f"exchange.py - read_ticks()")
-        print(f"exchange.py - read_ticks() - symbol: {symbol}, start_time: {start_time}, end_time: {end_time}")
-        print(f"tipo start_time: {type(start_time)}, tipo end_time: {type(end_time)}")
-
         ticks = mt5.copy_ticks_range(
             symbol,
             start_time,
             end_time,
             mt5.COPY_TICKS_ALL
         )
-        print(f"exchange.py - read_ticks() - ticks: {ticks}")
         if ticks is None:
             erro = mt5.last_error()
-            print(f"exchange.py - read_ticks() - falha ao obter ticks. "
-                f"Código: {erro[0]}, Descrição: {erro[1]}")
             raise RuntimeError(f"MT5 copy_ticks_range falhou: {erro}")
         return ticks
 
