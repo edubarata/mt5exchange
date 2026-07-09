@@ -188,7 +188,6 @@ def read_ticks():
     df['time'] = pd.to_datetime(df['time'], unit='s')
     df['time'] = pd.to_datetime(df['time'], unit='s')
     df["volume"] = df["volume"].astype(float)
-    #df["tick_volume"] = df["tick_volume"].astype(float)
     resultado_json = df.to_dict(orient="records")
     return jsonify({
         "result": resultado_json
