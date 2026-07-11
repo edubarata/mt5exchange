@@ -161,7 +161,6 @@ class MT5api():
         dic = response.json()["result"]
         return dic
 
-
     def get_account_info_teste(self):
         url = f"{BASE_URL}/get_account_info"
         params = {}

@@ -24,7 +24,7 @@ class MT5ConnectionFactory:
             conn = MTrader(server, login, password)
             print("Conectado na API MT5Exchange (Windows)")
         else:
-            from .mt5api import MT5api
+            from mt5exchange.mt5api import MT5api
             conn = MT5api()
             print("Conectado na API MT5API (Linux)")
         return conn
