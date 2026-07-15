@@ -1,4 +1,4 @@
-VERSION = "0.1.4"
+VERSION = "0.1.5"
 import pandas as pd
 
 class MTrader():
@@ -148,7 +148,7 @@ class MTrader():
                 "price": symbol_info.ask if buy_sell == 'buy' else symbol_info.bid,
                 "deviation": slippage,
                 "magic": magic_number,
-                "comment": f"mt5exchange",
+                "comment": f"mt5exchange {VERSION}",
                 "type_filling": type_filling_mercado,
                 "type_time": type_time_mercado,
             }
@@ -161,7 +161,7 @@ class MTrader():
                 "price": float(price),
                 "deviation": slippage,
                 "magic": magic_number,
-                "comment": f"mt5exchange",
+                "comment": f"mt5exchange {VERSION}",
                 "type_filling": type_filling_stop,
                 "type_time": type_time_stop,
             }
@@ -174,7 +174,7 @@ class MTrader():
                 "price": float(price),
                 "deviation": slippage,
                 "magic": magic_number,
-                "comment": f"mt5exchange",
+                "comment": f"mt5exchange {VERSION}",
                 "type_filling": type_filling_limit,
                 "type_time": type_time_limit,
             }
