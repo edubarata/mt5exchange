@@ -146,7 +146,7 @@ class MTrader():
                 "volume": float(volume),  # garantir que é float
                 "type": self.mt5.ORDER_TYPE_BUY if buy_sell == 'buy' else self.mt5.ORDER_TYPE_SELL,
                 "price": symbol_info.ask if buy_sell == 'buy' else symbol_info.bid,
-                "slippage": slippage,
+                "deviation": slippage,
                 "magic": magic_number,
                 "comment": f"Ordem mercado mt5exchange 0.1.4",
                 "type_filling": type_filling_mercado,
@@ -159,7 +159,7 @@ class MTrader():
                 "volume": float(volume),  # garantir que é float
                 "type": self.mt5.ORDER_TYPE_BUY_STOP if buy_sell == 'buy_stop' else self.mt5.ORDER_TYPE_SELL_STOP,
                 "price": float(price),
-                "slippage": slippage,
+                "deviation": slippage,
                 "magic": magic_number,
                 "comment": f"Ordem stop mt5exchange 0.1.4",
                 "type_filling": type_filling_stop,
@@ -172,7 +172,7 @@ class MTrader():
                 "volume": float(volume),  # garantir que é float
                 "type": self.mt5.ORDER_TYPE_BUY_LIMIT if buy_sell == 'buy_limit' else self.mt5.ORDER_TYPE_SELL_LIMIT,
                 "price": float(price),
-                "slippage": slippage,
+                "deviation": slippage,
                 "magic": magic_number,
                 "comment": f"mt5exchange",
                 "type_filling": type_filling_limit,
