@@ -179,9 +179,7 @@ class MTrader():
                 "type_time": type_time_limit,
             }
         # {'action': 1, 'symbol': 'WINQ26', 'volume': 1.0, 'type': 1, 'price': 178260.0, 'slippage': 5, 'magic': 434343, 'comment': 'Ordem mercado mt5exchange 0.1.4', 'type_filling': 1, 'type_time': 0}
-        print(f"order_request: --<{order_request}>--")
         order_result = self.mt5.order_send(order_request)
-        print(f"mt5exchange - order_result=<{order_result}>")
         if order_result is None:
             pass
             #print(f"order_send retornou None. last_error: {self.mt5.last_error()}")
