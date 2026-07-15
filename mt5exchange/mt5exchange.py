@@ -174,7 +174,7 @@ class MTrader():
                 "price": float(price),
                 "slippage": slippage,
                 "magic": magic_number,
-                "comment": f"Ordem limit mt5exchange",
+                "comment": f"mt5exchange",
                 "type_filling": type_filling_limit,
                 "type_time": type_time_limit,
             }
