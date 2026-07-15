@@ -148,7 +148,7 @@ class MTrader():
                 "price": symbol_info.ask if buy_sell == 'buy' else symbol_info.bid,
                 "deviation": slippage,
                 "magic": magic_number,
-                "comment": f"Ordem mercado mt5exchange 0.1.4",
+                "comment": f"mt5exchange",
                 "type_filling": type_filling_mercado,
                 "type_time": type_time_mercado,
             }
@@ -161,7 +161,7 @@ class MTrader():
                 "price": float(price),
                 "deviation": slippage,
                 "magic": magic_number,
-                "comment": f"Ordem stop mt5exchange 0.1.4",
+                "comment": f"mt5exchange",
                 "type_filling": type_filling_stop,
                 "type_time": type_time_stop,
             }
