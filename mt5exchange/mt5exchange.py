@@ -112,6 +112,7 @@ class MTrader():
 
         # 3. Verificar símbolo
         symbol_info = self.mt5.symbol_info(symbol)
+        print(f"symbol_info=<{symbol_info}>")
         if symbol_info is None:
             print(f"Símbolo {symbol} não encontrado: {self.mt5.last_error()}")
             return None
@@ -173,16 +174,19 @@ class MTrader():
                 "price": float(price),
                 "slippage": slippage,
                 "magic": magic_number,
-                "comment": f"Ordem limit mt5exchange 0.1.4",
+                "comment": f"Ordem limit mt5exchange",
                 "type_filling": type_filling_limit,
                 "type_time": type_time_limit,
             }
-
+        # {'action': 1, 'symbol': 'WINQ26', 'volume': 1.0, 'type': 1, 'price': 178260.0, 'slippage': 5, 'magic': 434343, 'comment': 'Ordem mercado mt5exchange 0.1.4', 'type_filling': 1, 'type_time': 0}
+        print(f"order_request: --<{order_request}>--")
         order_result = self.mt5.order_send(order_request)
-        
+        print(f"mt5exchange - order_result=<{order_result}>")
         if order_result is None:
             pass
             #print(f"order_send retornou None. last_error: {self.mt5.last_error()}")
+            erro = self.mt5.last_error()
+            print(f"order_send falhou. Código: {erro[0]}, Descrição: {erro[1]}")
         else:
             pass
             #print(f"retcode: {order_result.retcode}, comment: {order_result.comment}")
