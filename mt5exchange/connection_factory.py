@@ -16,6 +16,13 @@ class MT5ConnectionFactory:
         """Sempre conecta ao MT5 real para leitura de dados/histórico."""
         if platform_mode == "auto":
             platform_mode = "windows" if platform.system() == "Windows" else "linux"
+        print(150*'0')
+        print(150*'0')
+        print(150*'0')
+        print(f"platform_mode: {platform_mode}")
+        print(150*'0')
+        print(150*'0')
+        print(150*'0')
 
         if platform_mode == "windows":
             from mt5exchange.mt5exchange import MTrader

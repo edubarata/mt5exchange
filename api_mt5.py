@@ -14,6 +14,8 @@ CORS(app)
 server, login, password = mt5_clear_password()
 conn = MTrader(server, login, password, log_debug=False)
 print(1000*'-')
+print(1000*'=')
+
 def symbol_info_to_dict_old(info):
     if info is None:
         return None
