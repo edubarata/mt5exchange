@@ -12,7 +12,7 @@ class MT5ConnectionFactory:
     """
 
     @staticmethod
-    def create_data_source(platform_mode="auto"):
+    def create_data_source(broker, platform_mode="auto"):
         """Sempre conecta ao MT5 real para leitura de dados/histórico."""
         if platform_mode == "auto":
             platform_mode = "windows" if platform.system() == "Windows" else "linux"
@@ -21,6 +21,17 @@ class MT5ConnectionFactory:
             from mt5exchange.mt5exchange import MTrader
             from passwords import mt5_clear_password
             server, login, password = mt5_clear_password()
+            print(150*'-')
+            print(150*'-')
+            print(150*'-')
+
+            print(150*'-')
+            print(150*'-')
+            print(150*'-')
+            server_novo   = broker['server']
+            login_novo    = broker['login']
+            password_novo = broker['password']
+            print(f"Broker: server_novo: {server_novo}, login_novo: {login_novo}, password_novo: {password_novo}")
             conn = MTrader(server, login, password)
             print("Conectado na API MT5Exchange (Windows)")
         else:
@@ -30,11 +41,11 @@ class MT5ConnectionFactory:
         return conn
 
     @staticmethod
-    def create_executor(mode="simulated"):
+    def create_executor(broker, mode="simulated"):
         """Execução de ordens: simulada (RL) ou real (trading ao vivo)."""
         if mode == "simulated":
             from app.rl.simulator import MT5Simulator
             print("Conectado na API Simulador (execução simulada)")
             return MT5Simulator()
         else:
-            return MT5ConnectionFactory.create_data_source()
+            return MT5ConnectionFactory.create_data_source(broker)

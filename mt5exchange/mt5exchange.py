@@ -59,48 +59,6 @@ class MTrader():
         current_open = rates[1][1]
         return last_close, current_open, current_value
 
-    def order_old(self,buy_sell, symbol, volume):
-        slippage = 5  # Slippage permitido em pontos
-        magic_number = 434343  # Número mágico para identificar a ordem
-
-        terminal = self.mt5.terminal_info()
-        print(f"Terminal conectado: {terminal.connected}, trade_allowed: {terminal.trade_allowed}")
-
-
-        # Obter preço atual de mercado
-        symbol_info = self.mt5.symbol_info(symbol)
-        if symbol_info is None:
-            print(f"Símbolo {symbol} não encontrado")
-            self.mt5.shutdown()
-            exit()
-
-        #price = self.mt5.symbol_info_tick(symbol).ask  # Preço de compra (ask)
-        # Criar a solicitação de compra
-        order_request = {
-            "action": self.mt5.TRADE_ACTION_DEAL,  # Ordem a mercado
-            "symbol": symbol,
-            "volume": volume,
-            "type": self.mt5.ORDER_TYPE_BUY if buy_sell == 'buy' else self.mt5.ORDER_TYPE_SELL,  # Compra
-            #"price": price,
-            "price": symbol_info.ask,
-            "slippage": slippage,
-            "magic": magic_number,
-            "comment": "Ordem de compra via mt5ai",
-            "type_filling": self.mt5.ORDER_FILLING_IOC,  # Imediato ou cancelar
-            "type_time": self.mt5.ORDER_TIME_GTC,  # Válida até cancelamento
-        }
-
-        # Enviar a ordem
-        order_result = self.mt5.order_send(order_request)
-        print(f"resposta do order: {order_result}")
-        # Verificar resultado da ordem
-        #if order_result.retcode == self.mt5.TRADE_RETCODE_DONE:
-        #    print(f"Ordem de compra executada com sucesso! Ticket: {order_result.order}")
-        #else:
-        #    print(f"Falha ao enviar ordem: {order_result.retcode}")
-        
-        return order_result
-
     def order(self, buy_sell, symbol, volume, price=0.0):
         # 1. Verificar conexão com MT5
         if not self.mt5.initialize():
@@ -293,6 +251,9 @@ class MTrader():
             df['tick_volume'] = 0
         df['time'] = pd.to_datetime(df['time'],unit='s')
         df.drop(["spread"], axis=1,inplace=True)
+        print(150*'-', '******')
+        print(df)
+        print(150*'-')
         return df
 
     def read_OHLC(self,symbol,tf,n=1):
