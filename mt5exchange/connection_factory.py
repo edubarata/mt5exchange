@@ -14,6 +14,13 @@ class MT5ConnectionFactory:
     @staticmethod
     def create_data_source(broker, platform_mode="auto"):
         """Sempre conecta ao MT5 real para leitura de dados/histórico."""
+        print(150*'1')
+        print(150*'1')
+        print(150*'1')
+        print(f"platform_mode: {platform_mode}")
+        print(150*'1')
+        print(150*'1')
+        print(150*'1')
         if platform_mode == "auto":
             platform_mode = "windows" if platform.system() == "Windows" else "linux"
         print(150*'0')
