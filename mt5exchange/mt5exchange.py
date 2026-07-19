@@ -70,7 +70,6 @@ class MTrader():
 
         # 3. Verificar símbolo
         symbol_info = self.mt5.symbol_info(symbol)
-        print(f"symbol_info=<{symbol_info}>")
         if symbol_info is None:
             print(f"Símbolo {symbol} não encontrado: {self.mt5.last_error()}")
             return None
@@ -140,12 +139,11 @@ class MTrader():
         order_result = self.mt5.order_send(order_request)
         if order_result is None:
             pass
-            #print(f"order_send retornou None. last_error: {self.mt5.last_error()}")
+
             erro = self.mt5.last_error()
             print(f"order_send falhou. Código: {erro[0]}, Descrição: {erro[1]}")
         else:
             pass
-            #print(f"retcode: {order_result.retcode}, comment: {order_result.comment}")
 
         return order_result
 
@@ -251,9 +249,6 @@ class MTrader():
             df['tick_volume'] = 0
         df['time'] = pd.to_datetime(df['time'],unit='s')
         df.drop(["spread"], axis=1,inplace=True)
-        print(150*'-', '******')
-        print(df)
-        print(150*'-')
         return df
 
     def read_OHLC(self,symbol,tf,n=1):

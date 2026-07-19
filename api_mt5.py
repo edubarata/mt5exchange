@@ -3,152 +3,25 @@ import pandas as pd
 
 from flask import Flask, request, jsonify
 from passwords import mt5_clear_password
+from passwords import infinox
 
 from mt5exchange.mt5exchange import MTrader
 import MetaTrader5 as mt5
 from flask_cors import CORS
 import time
+import sys
+
 app = Flask(__name__)
 CORS(app)
 
-server, login, password = mt5_clear_password()
-conn = MTrader(server, login, password, log_debug=False)
-print(1000*'-')
-print(1000*'=')
-
-def symbol_info_to_dict_old(info):
-    if info is None:
+"""
+def symbol_info_to_dict(resultado):
+    if resultado is None:
         return None
-    return {
-        "custom": info.custom,
-        "chart_mode": info.chart_mode,
-        "select": info.select,
-        "visible": info.visible,
+    return resultado._asdict()
+"""
 
-        "session_deals": info.session_deals,
-        "session_buy_orders": info.session_buy_orders,
-        "session_sell_orders": info.session_sell_orders,
-
-        "volume": info.volume,
-        "volume_real": info.volume_real,
-        "volumehigh": info.volumehigh,
-        "volumelow": info.volumelow,
-        "volumehigh_real": info.volumehigh_real,
-        "volumelow_real": info.volumelow_real,
-
-        "time": info.time,
-        "digits": info.digits,
-        "spread": info.spread,
-        "spread_float": info.spread_float,
-
-        "ticks_bookdepth": info.ticks_bookdepth,
-
-        "trade_calc_mode": info.trade_calc_mode,
-        "trade_mode": info.trade_mode,
-        "trade_exemode": info.trade_exemode,
-        "trade_stops_level": info.trade_stops_level,
-        "trade_freeze_level": info.trade_freeze_level,
-
-        "start_time": info.start_time,
-        "expiration_time": info.expiration_time,
-
-        "filling_mode": info.filling_mode,
-        "order_mode": info.order_mode,
-        "order_gtc_mode": info.order_gtc_mode,
-
-        "option_mode": info.option_mode,
-        "option_right": info.option_right,
-        "option_strike": info.option_strike,
-
-        "bid": info.bid,
-        "bidhigh": info.bidhigh,
-        "bidlow": info.bidlow,
-
-        "ask": info.ask,
-        "askhigh": info.askhigh,
-        "asklow": info.asklow,
-
-        "last": info.last,
-        "lasthigh": info.lasthigh,
-        "lastlow": info.lastlow,
-
-        "point": info.point,
-
-        "trade_tick_value": info.trade_tick_value,
-        "trade_tick_value_profit": info.trade_tick_value_profit,
-        "trade_tick_value_loss": info.trade_tick_value_loss,
-        "trade_tick_size": info.trade_tick_size,
-        "trade_contract_size": info.trade_contract_size,
-
-        "trade_accrued_interest": info.trade_accrued_interest,
-        "trade_face_value": info.trade_face_value,
-        "trade_liquidity_rate": info.trade_liquidity_rate,
-
-        "volume_min": info.volume_min,
-        "volume_max": info.volume_max,
-        "volume_step": info.volume_step,
-        "volume_limit": info.volume_limit,
-
-        "swap_long": info.swap_long,
-        "swap_short": info.swap_short,
-        "swap_mode": info.swap_mode,
-        "swap_rollover3days": info.swap_rollover3days,
-
-        "margin_initial": info.margin_initial,
-        "margin_maintenance": info.margin_maintenance,
-        "margin_hedged": info.margin_hedged,
-        "margin_hedged_use_leg": info.margin_hedged_use_leg,
-
-        "session_volume": info.session_volume,
-        "session_turnover": info.session_turnover,
-        "session_interest": info.session_interest,
-
-        "session_buy_orders_volume": info.session_buy_orders_volume,
-        "session_sell_orders_volume": info.session_sell_orders_volume,
-
-        "session_open": info.session_open,
-        "session_close": info.session_close,
-        "session_aw": info.session_aw,
-        "session_price_settlement": info.session_price_settlement,
-        "session_price_limit_min": info.session_price_limit_min,
-        "session_price_limit_max": info.session_price_limit_max,
-
-        "price_change": info.price_change,
-        "price_volatility": info.price_volatility,
-
-        "price_theoretical": info.price_theoretical,
-        "price_sensitivity": info.price_sensitivity,
-
-        "price_greeks_delta": info.price_greeks_delta,
-        "price_greeks_theta": info.price_greeks_theta,
-        "price_greeks_gamma": info.price_greeks_gamma,
-        "price_greeks_vega": info.price_greeks_vega,
-        "price_greeks_rho": info.price_greeks_rho,
-        "price_greeks_omega": info.price_greeks_omega,
-
-        "basis": info.basis,
-        "category": info.category,
-
-        "currency_base": info.currency_base,
-        "currency_profit": info.currency_profit,
-        "currency_margin": info.currency_margin,
-
-        "bank": info.bank,
-        "description": info.description,
-        "exchange": info.exchange,
-        "formula": info.formula,
-        "isin": info.isin,
-        "name": info.name,
-        "page": info.page,
-        "path": info.path
-    }
-
-def symbol_info_to_dict(info):
-    if info is None:
-        return None
-    return info._asdict()
-
-@app.route('/symbol_select', methods=['GET']) #done
+@app.route('/symbol_select',    methods=['GET']) #done
 def symbol_select():
     symbol    = request.args.get("symbol")
     symbol = symbol.upper()
@@ -157,16 +30,18 @@ def symbol_select():
         "result": resultado
     })
 
-@app.route('/read_all_info', methods=['GET']) #done
+@app.route('/read_all_info',    methods=['GET']) #done
 def read_all_info():
     symbol    = request.args.get("symbol")
     conn.symbol_select(symbol)
     resultado = conn.read_all_info(symbol)
+    if resultado is not None:
+        resultado = resultado._asdict()
     return jsonify({
-        "result": symbol_info_to_dict(resultado)
+        "result" : resultado
     })
 
-@app.route('/read_candles', methods=['GET']) #done
+@app.route('/read_candles',     methods=['GET']) #done
 def read_candles():
     symbol = request.args.get("symbol")
     tf     = request.args.get("tf")
@@ -178,7 +53,7 @@ def read_candles():
         "result": resultado.to_dict(orient='records')
     })
 
-@app.route('/read_ticks', methods=['GET']) #done
+@app.route('/read_ticks',       methods=['GET']) #done
 def read_ticks():
     print("read_ticks em api_mt5.py")
     symbol = request.args.get("symbol")
@@ -202,7 +77,7 @@ def get_account_info():
         "result": resultado
     })
 
-@app.route('/read_OHLC', methods=['GET']) #done
+@app.route('/read_OHLC',        methods=['GET']) #done
 def read_OHLC():
     symbol = request.args.get("symbol")
     tf     = request.args.get("tf")
@@ -214,7 +89,7 @@ def read_OHLC():
         "result": resultado.to_dict(orient='records')
     })
 
-@app.route('/order', methods=['GET'])
+@app.route('/order',            methods=['GET'])
 def order():
     buy_sell = request.args.get("buy_sell")
     symbol   = request.args.get("symbol")
@@ -228,7 +103,7 @@ def order():
         "order_result"    : order_result
     })
 
-@app.route('/read_orders', methods=['GET'])
+@app.route('/read_orders',      methods=['GET'])
 def read_orders():
     symbol   = request.args.get("symbol")
     symb_sel_result    = conn.symbol_select(symbol)
@@ -241,7 +116,7 @@ def read_orders():
         "order_result"    : read_orders_result
     })
 
-@app.route('/read_info', methods=['GET']) #done
+@app.route('/read_info',        methods=['GET']) #done
 def read_info():
     symbol = request.args.get("symbol")
     conn.symbol_select(symbol)
@@ -252,7 +127,7 @@ def read_info():
         "preco_compra": preco_compra
     })
 
-@app.route('/read_price_day', methods=['GET']) #done
+@app.route('/read_price_day',   methods=['GET']) #done
 def read_price_day():
     symbol = request.args.get("symbol")
     conn.symbol_select(symbol)
@@ -263,7 +138,7 @@ def read_price_day():
         "current_value": current_value
     })
 
-@app.route('/read_position', methods=['GET'])
+@app.route('/read_position',    methods=['GET'])
 def read_position():
     symbol = request.args.get("symbol")
     conn.symbol_select(symbol)
@@ -272,7 +147,7 @@ def read_position():
     resposta = jsonify(position)
     return resposta
 
-@app.route('/read_positions', methods=['GET'])
+@app.route('/read_positions',   methods=['GET'])
 def read_positions():
     symbol = request.args.get("symbol")
     conn.symbol_select(symbol)
@@ -282,7 +157,7 @@ def read_positions():
     })
     return resposta
 
-@app.route("/get_book", methods=["GET"])
+@app.route("/get_book",         methods=["GET"])
 def get_book():
     symbol = request.args.get("symbol")
     conn.symbol_select(symbol)
@@ -293,7 +168,7 @@ def get_book():
         "book": book
     })
 
-@app.route("/preco", methods=["GET"])
+@app.route("/preco",            methods=["GET"])
 def preco():
     symbol = request.args.get("symbol")
     contador = 0
@@ -314,7 +189,7 @@ def preco():
         "last":   tick.last
     })
 
-@app.route("/allinfo", methods=["GET"])
+@app.route("/allinfo",          methods=["GET"])
 def allinfo():
     simbolo = request.args.get("simbolo")
     result = conn.symbol_select(simbolo)
@@ -359,7 +234,7 @@ def allinfo():
                 "result":  "nok",
                 "message": "Símbolo inválido",})
 
-@app.route("/candles", methods=["GET"])
+@app.route("/candles",          methods=["GET"])
 def candles():
     simbolo = request.args.get("simbolo")
     tf = request.args.get("tf")
@@ -386,4 +261,19 @@ def posicoes():
     return jsonify(res)
 
 if __name__ == "__main__":
+    if len(sys.argv) == 1:
+        print('Falta parâmetro do Broker')
+        exit()
+
+    brokers = ['clear', 'infinox']
+
+    if sys.argv[1] == 'clear':
+        server, login, password = mt5_clear_password()
+    elif sys.argv[1] == 'infinox':
+        server, login, password = infinox()
+    else:
+        exit()
+    print(f"api_mt5.py")
+    conn = MTrader(server, login, password, log_debug=False)
+
     app.run(host="0.0.0.0", port=5000) #, ssl_context=('cert.pem', 'key.pem'))
