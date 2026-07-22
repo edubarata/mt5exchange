@@ -278,6 +278,7 @@ class MTrader():
         if ticks is None:
             erro = self.mt5.last_error()
             raise RuntimeError(f"MT5 copy_ticks_range falhou: {erro}")
+        print(ticks)
         return ticks
 
     def get_book(self, symbol):
