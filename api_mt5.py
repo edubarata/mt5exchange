@@ -61,6 +61,7 @@ def read_ticks():
     end_time =   datetime.strptime(request.args.get("end_time"),   '%Y-%m-%d %H:%M:%S')
     conn.symbol_select(symbol)
     resultado = conn.read_ticks(symbol, start_time, end_time)
+    #print(f"api_mt5 - read_ticks - {len(resultado)}")
     df = pd.DataFrame(resultado)
     df['time'] = pd.to_datetime(df['time'], unit='s')
     df['time'] = pd.to_datetime(df['time'], unit='s')

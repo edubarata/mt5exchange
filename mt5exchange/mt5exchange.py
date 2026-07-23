@@ -288,13 +288,13 @@ class MTrader():
         if ticks is None:
             erro = self.mt5.last_error()
             raise RuntimeError(f"MT5 copy_ticks_range falhou: {erro}")
-        print(ticks)
-        from datetime import datetime
-        for tick in ticks:
-            dif = "Diferente" if abs(tick[1] - tick[3]) > 500 or abs(tick[2] - tick[3]) > 500 else "         "
-            if dif == 'Diferente':
-                print(dif, datetime.fromtimestamp(tick[0]), tick[1], tick[2], tick[3], tick)
-        print(f"len(ticks): {len(ticks)}")
+        #print(ticks)
+        #from datetime import datetime
+        #for tick in ticks:
+        #    dif = "Diferente" if abs(tick[1] - tick[3]) > 500 or abs(tick[2] - tick[3]) > 500 else "         "
+        #    if dif == 'Diferente':
+        #        print(dif, datetime.fromtimestamp(tick[0]), tick[1], tick[2], tick[3], tick)
+        #print(f"len(ticks): {len(ticks)}")
         return ticks
 
     def get_book(self, symbol):
