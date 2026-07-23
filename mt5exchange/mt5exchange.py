@@ -268,6 +268,16 @@ class MTrader():
         return df
 
     def read_ticks(self, symbol, start_time, end_time):
+        # formato do dado: (time, bid, ask, last, volume, time_msc, flags, volume_real)
+        # time     : Timestamp Unix em segundos.
+        # time_msc : Timestamp em milissegundos desde 01/01/1970.
+        # flags    : TICK_FLAG_BID    = 2  (00000010)
+        #            TICK_FLAG_ASK    = 4  (00000100)
+        #            TICK_FLAG_LAST   = 8  (00001000)
+        #            TICK_FLAG_VOLUME = 16 (00010000)
+        #            TICK_FLAG_BUY    = 32 (00100000)
+        #            TICK_FLAG_SELL   = 64 (01000000)
+
         print("read_ticks em mt5exchange")
         ticks = self.mt5.copy_ticks_range(
             symbol,
@@ -279,6 +289,12 @@ class MTrader():
             erro = self.mt5.last_error()
             raise RuntimeError(f"MT5 copy_ticks_range falhou: {erro}")
         print(ticks)
+        from datetime import datetime
+        for tick in ticks:
+            dif = "Diferente" if abs(tick[1] - tick[3]) > 500 or abs(tick[2] - tick[3]) > 500 else "         "
+            if dif == 'Diferente':
+                print(dif, datetime.fromtimestamp(tick[0]), tick[1], tick[2], tick[3], tick)
+        print(f"len(ticks): {len(ticks)}")
         return ticks
 
     def get_book(self, symbol):
