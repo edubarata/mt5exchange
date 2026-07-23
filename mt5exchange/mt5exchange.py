@@ -278,7 +278,7 @@ class MTrader():
         #            TICK_FLAG_BUY    = 32 (00100000)
         #            TICK_FLAG_SELL   = 64 (01000000)
 
-        print("read_ticks em mt5exchange")
+        #print("read_ticks em mt5exchange")
         ticks = self.mt5.copy_ticks_range(
             symbol,
             start_time,

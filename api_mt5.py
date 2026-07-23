@@ -55,7 +55,7 @@ def read_candles():
 
 @app.route('/read_ticks',       methods=['GET']) #done
 def read_ticks():
-    print("read_ticks em api_mt5.py")
+    #print("read_ticks em api_mt5.py")
     symbol = request.args.get("symbol")
     start_time = datetime.strptime(request.args.get("start_time"), '%Y-%m-%d %H:%M:%S')
     end_time =   datetime.strptime(request.args.get("end_time"),   '%Y-%m-%d %H:%M:%S')
