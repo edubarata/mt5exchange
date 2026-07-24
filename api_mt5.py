@@ -55,13 +55,11 @@ def read_candles():
 
 @app.route('/read_ticks',       methods=['GET']) #done
 def read_ticks():
-    #print("read_ticks em api_mt5.py")
     symbol = request.args.get("symbol")
     start_time = datetime.strptime(request.args.get("start_time"), '%Y-%m-%d %H:%M:%S')
     end_time =   datetime.strptime(request.args.get("end_time"),   '%Y-%m-%d %H:%M:%S')
     conn.symbol_select(symbol)
     resultado = conn.read_ticks(symbol, start_time, end_time)
-    #print(f"api_mt5 - read_ticks - {len(resultado)}")
     df = pd.DataFrame(resultado)
     df['time'] = pd.to_datetime(df['time'], unit='s')
     df['time'] = pd.to_datetime(df['time'], unit='s')
@@ -274,7 +272,6 @@ if __name__ == "__main__":
         server, login, password = infinox()
     else:
         exit()
-    print(f"api_mt5.py")
     conn = MTrader(server, login, password, log_debug=False)
 
     app.run(host="0.0.0.0", port=5000) #, ssl_context=('cert.pem', 'key.pem'))

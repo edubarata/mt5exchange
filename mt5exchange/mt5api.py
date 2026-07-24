@@ -57,7 +57,6 @@ class MT5api():
         return df
 
     def read_ticks(self,symbol,start_time,end_time):
-        #print(f"read_ticks em mt5api.py")
         url = f"{BASE_URL}/read_ticks"
         params = {"symbol": symbol, "start_time": start_time, "end_time": end_time}
         response = requests.get(url, params=params)
