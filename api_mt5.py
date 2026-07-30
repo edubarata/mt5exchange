@@ -72,6 +72,7 @@ def read_ticks():
 @app.route('/get_account_info', methods=['GET']) #done
 def get_account_info():
     resultado = conn.get_account_info()
+    resultado['_pnl_nao_realizado'] = 0
     return jsonify({
         "result": resultado
     })
