@@ -354,7 +354,7 @@ class MTrader():
 
     def get_account_info(self):
         info = self.mt5.account_info()
-        print(f~;;;;;; info: {info})
+        print(f";;;;;; info: {info}")
         info['_pnl_nao_realizado'] = 0
         info_dict = info._asdict()
         return info_dict
