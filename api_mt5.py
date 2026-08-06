@@ -100,7 +100,8 @@ def order():
     order_result    = conn.order(buy_sell, symbol, volume, price)
     return jsonify({
         "symb_sel_result" : symb_sel_result,
-        "order_result"    : order_result
+        "order_result"    : order_result,
+        "position"        : "EM_TRABALHO",
     })
 
 @app.route('/read_orders',      methods=['GET'])
