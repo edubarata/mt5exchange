@@ -164,8 +164,8 @@ def _read_positions(symbol):
     positions = conn.read_positions(symbol)
     print(f"positions: {positions}")
     position = {
-                'volume' : positions[3],
-                'type'   : positions[2]
+                'volume' : positions.volume,
+                'type'   : positions.type,
             }
 
 
