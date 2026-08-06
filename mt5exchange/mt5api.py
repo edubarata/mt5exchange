@@ -182,8 +182,8 @@ class MT5api():
         params = {}
         response = requests.get(url)
         dic = response.json()
-        print(f"dic: {dic}")
-        print(f"dic['result']: {dic['result']}")
+        #print(f"dic: {dic}")
+        #print(f"dic['result']: {dic['result']}")
         return dic["result"]
 
     def get_account_info_teste(self):
