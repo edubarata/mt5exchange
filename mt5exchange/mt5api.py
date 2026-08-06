@@ -37,7 +37,8 @@ class MT5api():
         print(position)
         if position['volume'] == 0: # self.position da classe MT5Simulator: -1 Vendido, 0 Líquido, 1 Comprado
             return 0.0
-        return -1.1
+        info = self.read_info(self,symbol)
+        print(f"info: {info}")
         """
         tick = self.simulator.obter_tick_atual('_pnl_nao_realizado')
         preco_atual = tick['last'] # tick['bid'] if self.position == 2 else tick['ask']
