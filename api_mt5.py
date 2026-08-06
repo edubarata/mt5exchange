@@ -98,7 +98,7 @@ def order():
     price    = float(request.args.get("price"))
     symb_sel_result = conn.symbol_select(symbol)
     order_result    = conn.order(buy_sell, symbol, volume, price)
-    position = _read_positions()
+    position = _read_positions(symbol)
     return jsonify({
         "symb_sel_result" : symb_sel_result,
         "order_result"    : order_result,
