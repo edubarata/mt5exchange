@@ -35,7 +35,7 @@ class MT5api():
         position = self.read_positions(symbol)
         print(f"========================> Position")
         print(position)
-        if position == 0: # self.position da classe MT5Simulator: -1 Vendido, 0 Líquido, 1 Comprado
+        if position['volume'] == 0: # self.position da classe MT5Simulator: -1 Vendido, 0 Líquido, 1 Comprado
             return 0.0
         return -1.1
         """
