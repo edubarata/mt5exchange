@@ -31,7 +31,7 @@ class MT5api():
             self.error = False
 
 
-    def _pnl_nao_realizado(self, symbol, preco_medio) -> float:
+    def _pnl_nao_realizado(self, symbol) -> float:
         position = self.read_positions(symbol) # print -> {'type': 1, 'volume': 1.0} type = 1 Vendido, type = 0 Comprado
         print(f"========================> Position")
         print(position)
@@ -44,6 +44,7 @@ class MT5api():
             preco_atual = info[2]
         else:
             preco_atual = info[1]
+        preco_medio = 0
         valor_por_ponto = 0.2 # self._valor_por_ponto(self.simulator.ativo)
         resposta = position['volume'] * (preco_atual - preco_medio) * valor_por_ponto
         """

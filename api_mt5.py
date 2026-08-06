@@ -160,12 +160,13 @@ def read_positions():
 def _read_positions(symbol):
     conn.symbol_select(symbol)
     positions = conn.read_positions(symbol)
-    print(f"positions.volume : {positions.volume}")
-    print(f"positions.type   : {positions.type}")
+    print(f"positions.volume    : {positions.volume}")
+    print(f"positions.type      : {positions.type}")
     position = {
-                'volume'     : positions.volume,
-                'type'       : positions.type,
-                'price_open' : positions.price_open,
+                'volume'        : positions.volume,
+                'type'          : positions.type,
+                'price_open'    : positions.price_open,
+                'price_current' : position.price_current,
             }
     resposta = jsonify({
         'position' : position,
