@@ -169,7 +169,7 @@ def _read_positions(symbol):
                 'type'   : positions.type,
             }
     resposta = jsonify({
-        position
+        'position' : position,
     })
     print(f"Resposta: {resposta}")
     return resposta
