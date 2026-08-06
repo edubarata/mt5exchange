@@ -168,7 +168,7 @@ def _read_positions(symbol):
                 'volume'        : positions.volume,
                 'type'          : positions.type,
                 'price_open'    : positions.price_open,
-                'price_current' : position.price_current,
+                'price_current' : positions.price_current,
             }
     resposta = jsonify({
         'position' : position,
