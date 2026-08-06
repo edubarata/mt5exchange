@@ -91,6 +91,7 @@ def read_OHLC():
 
 @app.route('/order',            methods=['GET'])
 def order():
+    print(f"====================> /order <====================")
     buy_sell = request.args.get("buy_sell")
     symbol   = request.args.get("symbol")
     volume_aux = request.args.get("volume")
@@ -161,6 +162,13 @@ def read_positions():
 def _read_positions(symbol):
     conn.symbol_select(symbol)
     positions = conn.read_positions(symbol)
+    print(f"positions: {positions}")
+    position = {
+                'volume' : positions[3],
+                'type'   : positions[2]
+            }
+
+
     resposta = jsonify({
         positions
     })
