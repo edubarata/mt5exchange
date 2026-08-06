@@ -154,9 +154,7 @@ def read_position():
 def read_positions():
     symbol = request.args.get("symbol")
     positions = _read_positions(symbol)
-    resposta = jsonify({
-        'positions' : positions
-    })
+    resposta = jsonify(positions)
     return resposta
 
 def _read_positions(symbol):
