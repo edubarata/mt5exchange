@@ -155,7 +155,7 @@ def read_positions():
     symbol = request.args.get("symbol")
     positions = _read_positions(symbol)
     resposta = jsonify({
-        positions
+        'positions' : positions
     })
     return resposta
 
@@ -171,8 +171,8 @@ def _read_positions(symbol):
     resposta = jsonify({
         'position' : position,
     })
-    print(f"Resposta: {resposta}")
-    return resposta
+    print(f"position: {position}")
+    return position
 
 @app.route("/get_book",         methods=["GET"])
 def get_book():
