@@ -160,7 +160,7 @@ def read_positions():
 def _read_positions(symbol):
     conn.symbol_select(symbol)
     positions = conn.read_positions(symbol)
-    print(f"positions.volume        : {positions.volume}")
+    print(f"positions.volume x      : {positions.volume}")
     print(f"positions.type          : {positions.type}")
     print(f"positions.price_open    : {positions.price_open}")
     print(f"positions.price_current : {positions.price_current}")
