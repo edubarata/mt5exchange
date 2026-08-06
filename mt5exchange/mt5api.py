@@ -8,6 +8,7 @@ BASE_URL = "http://127.0.0.1:5000"
 
 class MT5api():
     def __init__(self): #(self,servidor,user_login,senha,verbose=True, log_debug=False):
+        pass
         #env = os.environ.copy()
         #env["WINEPREFIX"] = os.path.expanduser("~/.mt5")
         #subprocess.Popen(
@@ -29,6 +30,25 @@ class MT5api():
         else:
             self.error = False
 
+
+    def _pnl_nao_realizado(self, symbol) -> float:
+        position = self.read_positions(symbol)
+        print(f"========================> Position")
+        print(position)
+        if position == 0: # self.position da classe MT5Simulator: -1 Vendido, 0 Líquido, 1 Comprado
+            return 0.0
+        return -1.1
+        """
+        tick = self.simulator.obter_tick_atual('_pnl_nao_realizado')
+        preco_atual = tick['last'] # tick['bid'] if self.position == 2 else tick['ask']
+        valor_por_ponto = self._valor_por_ponto(self.simulator.ativo)
+        self.temp_tick_bid = tick['bid']
+        self.temp_tick_ask = tick['ask']
+        self.temp_posicao  = self.position
+        self.temp_preco_atual = preco_atual
+        self.temp_valor_por_ponto = valor_por_ponto
+        return self.position * (preco_atual - self.preco_medio) * valor_por_ponto
+        """
     def symbol_select(self, symbol): #done
         url = f"{BASE_URL}/symbol_select"
         params = {"symbol": symbol}
@@ -111,7 +131,7 @@ class MT5api():
         book = response.json()
         return book
 
-    def read_positions(self,symbol):
+    def read_positions(self, symbol):
         url = f"{BASE_URL}/read_positions"
         params = {"symbol": symbol}
         response = requests.get(url, params=params)
