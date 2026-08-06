@@ -98,10 +98,11 @@ def order():
     price    = float(request.args.get("price"))
     symb_sel_result = conn.symbol_select(symbol)
     order_result    = conn.order(buy_sell, symbol, volume, price)
+    position = _read_positions()
     return jsonify({
         "symb_sel_result" : symb_sel_result,
         "order_result"    : order_result,
-        "position"        : "EM_TRABALHO",
+        "position"        : position,
     })
 
 @app.route('/read_orders',      methods=['GET'])
@@ -151,12 +152,19 @@ def read_position():
 @app.route('/read_positions',   methods=['GET'])
 def read_positions():
     symbol = request.args.get("symbol")
+    positions = _read_positions(symbol)
+    resposta = jsonify({
+        positions
+    })
+    return resposta
+
+def _read_positions(symbol):
     conn.symbol_select(symbol)
     positions = conn.read_positions(symbol)
     resposta = jsonify({
         positions
     })
-    return resposta
+    return positions
 
 @app.route("/get_book",         methods=["GET"])
 def get_book():
