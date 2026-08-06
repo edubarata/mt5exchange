@@ -163,8 +163,9 @@ def _read_positions(symbol):
     print(f"positions.volume : {positions.volume}")
     print(f"positions.type   : {positions.type}")
     position = {
-                'volume' : positions.volume,
-                'type'   : positions.type,
+                'volume'     : positions.volume,
+                'type'       : positions.type,
+                'price_open' : positions.price_open,
             }
     resposta = jsonify({
         'position' : position,

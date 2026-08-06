@@ -31,23 +31,25 @@ class MT5api():
             self.error = False
 
 
-    def _pnl_nao_realizado(self, symbol) -> float:
-        position = self.read_positions(symbol)
+    def _pnl_nao_realizado(self, symbol, preco_medio) -> float:
+        position = self.read_positions(symbol) # print -> {'type': 1, 'volume': 1.0} type = 1 Vendido, type = 0 Comprado
         print(f"========================> Position")
         print(position)
         if position['volume'] == 0: # self.position da classe MT5Simulator: -1 Vendido, 0 Líquido, 1 Comprado
             return 0.0
-        info = self.read_info(symbol)
+        info = self.read_info(symbol)  # print -> 'info: (176460.0, 176465.0, 176460.0)' (last, bid, ask)
         print(f"info: {info}")
+        print(f"info[1]: {info[1]}")
+        if position['type'] == 0:
+            preco_atual = info[2]
+        else:
+            preco_atual = info[1]
+        valor_por_ponto = 0.2 # self._valor_por_ponto(self.simulator.ativo)
+        resposta = position['volume'] * (preco_atual - preco_medio) * valor_por_ponto
         """
         tick = self.simulator.obter_tick_atual('_pnl_nao_realizado')
         preco_atual = tick['last'] # tick['bid'] if self.position == 2 else tick['ask']
         valor_por_ponto = self._valor_por_ponto(self.simulator.ativo)
-        self.temp_tick_bid = tick['bid']
-        self.temp_tick_ask = tick['ask']
-        self.temp_posicao  = self.position
-        self.temp_preco_atual = preco_atual
-        self.temp_valor_por_ponto = valor_por_ponto
         return self.position * (preco_atual - self.preco_medio) * valor_por_ponto
         """
     def symbol_select(self, symbol): #done
