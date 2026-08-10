@@ -33,7 +33,7 @@ class MT5ConnectionFactory:
         else:
             from mt5exchange.mt5api import MT5api
             conn = MT5api()
-            print("Conectado na API MT5API (Linux)")
+            print("Conectado na API MT5api (Linux)")
         return conn
 
     @staticmethod
