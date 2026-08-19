@@ -33,10 +33,6 @@ class MT5ConnectionFactory:
             from mt5exchange.mt5api import MT5api
             conn = MT5api()
             print("Conectado na API MT5API (Linux)")
-            print("Conection Factory")
-            print(f"server: {server} / {server_novo}")
-            print(f"server: {login} / {login_novo}")
-            print(f"server: {password} / {password_novo}")
         return conn
 
     @staticmethod
