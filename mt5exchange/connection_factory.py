@@ -5,7 +5,6 @@ import platform
 
 class MT5ConnectionFactory:
     """Fábrica de conexões com o mercado (MT5).
-
     Dois eixos independentes:
     - fonte de dados: sempre conecta ao MT5 real (histórico, ticks, candles)
     - execução de ordens: simulada (RL/backtest) ou real (trading ao vivo)
@@ -34,6 +33,10 @@ class MT5ConnectionFactory:
             from mt5exchange.mt5api import MT5api
             conn = MT5api()
             print("Conectado na API MT5API (Linux)")
+            print("Conection Factory")
+            print(f"server: {server} / {server_novo}")
+            print(f"server: {login} / {login_novo}")
+            print(f"server: {password} / {password_novo}")
         return conn
 
     @staticmethod
