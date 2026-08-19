@@ -14,14 +14,7 @@ import sys
 app = Flask(__name__)
 CORS(app)
 
-"""
-def symbol_info_to_dict(resultado):
-    if resultado is None:
-        return None
-    return resultado._asdict()
-"""
-
-@app.route('/symbol_select',    methods=['GET']) #done
+@app.route('/symbol_select',    methods=['GET'])
 def symbol_select():
     symbol    = request.args.get("symbol")
     symbol = symbol.upper()
@@ -30,7 +23,7 @@ def symbol_select():
         "result": resultado
     })
 
-@app.route('/read_all_info',    methods=['GET']) #done
+@app.route('/read_all_info',    methods=['GET'])
 def read_all_info():
     symbol    = request.args.get("symbol")
     conn.symbol_select(symbol)
@@ -41,52 +34,26 @@ def read_all_info():
         "result" : resultado
     })
 
-@app.route('/read_candles',     methods=['GET']) #done
-def read_candles():
+@app.route('/read_info',        methods=['GET'])
+def read_info():
     symbol = request.args.get("symbol")
-    tf     = request.args.get("tf")
-    n      = int(request.args.get("n"))
     conn.symbol_select(symbol)
-    resultado = conn.read_candles(symbol,tf,n)
-    resultado['time'] = resultado['time'].astype(str)
+    ultimo_valor, preco_venda, preco_compra = conn.read_info(symbol)
     return jsonify({
-        "result": resultado.to_dict(orient='records')
+        "ultimo_valor": ultimo_valor,
+        "preco_venda":  preco_venda,
+        "preco_compra": preco_compra
     })
 
-@app.route('/read_ticks',       methods=['GET']) #done
-def read_ticks():
+@app.route('/read_price_day',   methods=['GET'])
+def read_price_day():
     symbol = request.args.get("symbol")
-    start_time = datetime.strptime(request.args.get("start_time"), '%Y-%m-%d %H:%M:%S')
-    end_time =   datetime.strptime(request.args.get("end_time"),   '%Y-%m-%d %H:%M:%S')
     conn.symbol_select(symbol)
-    resultado = conn.read_ticks(symbol, start_time, end_time)
-    df = pd.DataFrame(resultado)
-    df['time'] = pd.to_datetime(df['time'], unit='s')
-    df['time'] = pd.to_datetime(df['time'], unit='s')
-    df["volume"] = df["volume"].astype(float)
-    resultado_json = df.to_dict(orient="records")
+    last_close, current_open, current_value = conn.read_price_day(symbol)
     return jsonify({
-        "result": resultado_json
-})
-
-@app.route('/get_account_info', methods=['GET']) #done
-def get_account_info():
-    resultado = conn.get_account_info()
-    resultado['_pnl_nao_realizado'] = 0
-    return jsonify({
-        "result": resultado
-    })
-
-@app.route('/read_OHLC',        methods=['GET']) #done
-def read_OHLC():
-    symbol = request.args.get("symbol")
-    tf     = request.args.get("tf")
-    n      = int(request.args.get("n"))
-    conn.symbol_select(symbol)
-    resultado = conn.read_OHLC(symbol,tf,n)
-    resultado['time'] = resultado['time'].astype(str)
-    return jsonify({
-        "result": resultado.to_dict(orient='records')
+        "last_close": last_close,
+        "current_open":  current_open,
+        "current_value": current_value
     })
 
 @app.route('/order',            methods=['GET'])
@@ -104,41 +71,6 @@ def order():
         "symb_sel_result" : symb_sel_result,
         "order_result"    : order_result,
         "position"        : position,
-    })
-
-@app.route('/read_orders',      methods=['GET'])
-def read_orders():
-    symbol   = request.args.get("symbol")
-    symb_sel_result    = conn.symbol_select(symbol)
-    read_orders_result = conn.read_orders(symbol)
-    resultado = []
-    for order in read_orders_result:
-        resultado.append(order._asdict())
-    return jsonify({
-        "symb_sel_result" : symb_sel_result,
-        "order_result"    : read_orders_result
-    })
-
-@app.route('/read_info',        methods=['GET']) #done
-def read_info():
-    symbol = request.args.get("symbol")
-    conn.symbol_select(symbol)
-    ultimo_valor, preco_venda, preco_compra = conn.read_info(symbol)
-    return jsonify({
-        "ultimo_valor": ultimo_valor,
-        "preco_venda":  preco_venda,
-        "preco_compra": preco_compra
-    })
-
-@app.route('/read_price_day',   methods=['GET']) #done
-def read_price_day():
-    symbol = request.args.get("symbol")
-    conn.symbol_select(symbol)
-    last_close, current_open, current_value = conn.read_price_day(symbol)
-    return jsonify({
-        "last_close": last_close,
-        "current_open":  current_open,
-        "current_value": current_value
     })
 
 @app.route('/read_position',    methods=['GET'])
@@ -176,6 +108,71 @@ def _read_positions(symbol):
     print(f"position: {position}")
     return position
 
+@app.route("/verify_position",  methods=["GET"]) # PENDENTE
+def verify_position():
+    return jsonify({
+        "pendente": 'pendente'
+    })
+
+@app.route('/read_orders',      methods=['GET'])
+def read_orders():
+    symbol   = request.args.get("symbol")
+    symb_sel_result    = conn.symbol_select(symbol)
+    read_orders_result = conn.read_orders(symbol)
+    resultado = []
+    for order in read_orders_result:
+        resultado.append(order._asdict())
+    return jsonify({
+        "symb_sel_result" : symb_sel_result,
+        "order_result"    : read_orders_result
+    })
+
+@app.route("/verify_order",     methods=["GET"]) # PENDENTE
+def verify_order():
+    return jsonify({
+        "pendente": 'pendente'
+    })
+
+@app.route('/read_candles',     methods=['GET'])
+def read_candles():
+    symbol = request.args.get("symbol")
+    tf     = request.args.get("tf")
+    n      = int(request.args.get("n"))
+    conn.symbol_select(symbol)
+    resultado = conn.read_candles(symbol,tf,n)
+    resultado['time'] = resultado['time'].astype(str)
+    return jsonify({
+        "result": resultado.to_dict(orient='records')
+    })
+
+@app.route('/read_OHLC',        methods=['GET'])
+def read_OHLC():
+    symbol = request.args.get("symbol")
+    tf     = request.args.get("tf")
+    n      = int(request.args.get("n"))
+    conn.symbol_select(symbol)
+    resultado = conn.read_OHLC(symbol,tf,n)
+    resultado['time'] = resultado['time'].astype(str)
+    return jsonify({
+        "result": resultado.to_dict(orient='records')
+    })
+
+@app.route('/read_ticks',       methods=['GET'])
+def read_ticks():
+    symbol = request.args.get("symbol")
+    start_time = datetime.strptime(request.args.get("start_time"), '%Y-%m-%d %H:%M:%S')
+    end_time =   datetime.strptime(request.args.get("end_time"),   '%Y-%m-%d %H:%M:%S')
+    conn.symbol_select(symbol)
+    resultado = conn.read_ticks(symbol, start_time, end_time)
+    df = pd.DataFrame(resultado)
+    df['time'] = pd.to_datetime(df['time'], unit='s')
+    df['time'] = pd.to_datetime(df['time'], unit='s')
+    df["volume"] = df["volume"].astype(float)
+    resultado_json = df.to_dict(orient="records")
+    return jsonify({
+        "result": resultado_json
+})
+
 @app.route("/get_book",         methods=["GET"])
 def get_book():
     symbol = request.args.get("symbol")
@@ -186,6 +183,26 @@ def get_book():
     return jsonify({
         "book": book
     })
+
+@app.route("/close_orders",     methods=["GET"]) # PENDENTE
+def close_orders():
+    return jsonify({
+        "pendente": 'pendente'
+    })
+
+@app.route('/get_account_info', methods=['GET'])
+def get_account_info():
+    resultado = conn.get_account_info()
+    resultado['_pnl_nao_realizado'] = 0
+    return jsonify({
+        "result": resultado
+    })
+
+
+
+
+
+# A rotas abaixo parecem não ser usadas em nenhum lugar. devem ser retiradas
 
 @app.route("/preco",            methods=["GET"])
 def preco():

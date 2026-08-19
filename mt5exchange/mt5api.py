@@ -68,41 +68,6 @@ class MT5api():
         data = response.json()["result"]
         return data
 
-    def read_candles(self,symbol,tf,n=1): #done
-        url           = f"{BASE_URL}/read_candles"
-        params        = {"symbol": symbol, "tf": tf, "n": n}
-        response      = requests.get(url, params=params)
-        response_dict = response.json()["result"]
-        df = pd.DataFrame(response_dict)
-        df["time"] = pd.to_datetime(df["time"])
-        df["volume"] = df["volume"].astype(float)
-        df["tick_volume"] = df["tick_volume"].astype(float)
-        #df.set_index("time", inplace=True)
-        return df
-
-    def read_ticks(self,symbol,start_time,end_time):
-        url           = f"{BASE_URL}/read_ticks"
-        params        = {"symbol": symbol, "start_time": start_time, "end_time": end_time}
-        response      = requests.get(url, params=params)
-        response_dict = response.json()["result"]
-        df = pd.DataFrame(response_dict)
-        try:
-            df["time"] = pd.to_datetime(df["time"])
-            df["volume"] = df["volume"].astype(float)
-            #df.set_index("time", inplace=True)
-        except:
-            pass
-        return df
-
-    def read_OHLC(self,symbol,tf,n=1):
-        url           = f"{BASE_URL}/read_OHLC"
-        params        = {"symbol": symbol, "tf": tf, "n": n}
-        response      = requests.get(url, params=params)
-        df            = pd.DataFrame(response.json()["result"])
-        df["time"]    = pd.to_datetime(df["time"])
-        df.set_index("time", inplace=True)
-        return df
-    
     def read_info(self,papel): #done
         url           = f"{BASE_URL}/read_info"
         params        = {"symbol": papel}
@@ -127,13 +92,6 @@ class MT5api():
         response      = requests.get(url, params=params)
         order_result  = response.json()
         return order_result
-
-    def get_book(self, symbol):
-        url           = f"{BASE_URL}/get_book"
-        params        = {"symbol": symbol}
-        response      = requests.get(url, params=params)
-        book          = response.json()
-        return book
 
     def read_position(self,symbol):
         url           = f"{BASE_URL}/read_position"
@@ -170,6 +128,48 @@ class MT5api():
         order         = response.json()
         return False,0,0,0
 
+    def read_candles(self,symbol,tf,n=1): #done
+        url           = f"{BASE_URL}/read_candles"
+        params        = {"symbol": symbol, "tf": tf, "n": n}
+        response      = requests.get(url, params=params)
+        response_dict = response.json()["result"]
+        df = pd.DataFrame(response_dict)
+        df["time"] = pd.to_datetime(df["time"])
+        df["volume"] = df["volume"].astype(float)
+        df["tick_volume"] = df["tick_volume"].astype(float)
+        #df.set_index("time", inplace=True)
+        return df
+
+    def read_OHLC(self,symbol,tf,n=1):
+        url           = f"{BASE_URL}/read_OHLC"
+        params        = {"symbol": symbol, "tf": tf, "n": n}
+        response      = requests.get(url, params=params)
+        df            = pd.DataFrame(response.json()["result"])
+        df["time"]    = pd.to_datetime(df["time"])
+        df.set_index("time", inplace=True)
+        return df
+ 
+    def read_ticks(self,symbol,start_time,end_time):
+        url           = f"{BASE_URL}/read_ticks"
+        params        = {"symbol": symbol, "start_time": start_time, "end_time": end_time}
+        response      = requests.get(url, params=params)
+        response_dict = response.json()["result"]
+        df = pd.DataFrame(response_dict)
+        try:
+            df["time"] = pd.to_datetime(df["time"])
+            df["volume"] = df["volume"].astype(float)
+            #df.set_index("time", inplace=True)
+        except:
+            pass
+        return df
+
+    def get_book(self, symbol):
+        url           = f"{BASE_URL}/get_book"
+        params        = {"symbol": symbol}
+        response      = requests.get(url, params=params)
+        book          = response.json()
+        return book
+
     def close_orders(self, verbose=False):
         url           = f"{BASE_URL}/close_orders"
         params        = {}
@@ -183,32 +183,6 @@ class MT5api():
         response      = requests.get(url)
         dic           = response.json()
         return dic["result"]
-
-    def get_account_info_teste(self):
-        url = f"{BASE_URL}/get_account_info"
-        params        = {}
-        response      = requests.get(url)
-        print("\n[DEBUG] --- TENTANDO LER DADOS DO MT5 ---")
-        print(f"[DEBUG] Status da Resposta: {response.status_code}")
-        print(f"[DEBUG] Conteúdo Recebido: '{response.text}'")
-        
-        # Se a resposta for vazia ou erro HTTP, injeta um dicionário falso seguro
-        if response.status_code != 200 or not response.text.strip():
-            print("[DEBUG] Resposta inválida da API. Retornando saldo zerado de segurança.")
-            return {"balance": 0.0}
-
-        try:
-            # Tenta decodificar o JSON
-            dados_json = response.json()
-            
-            # Se a API envelopar o resultado em uma chave "result", extrai ela
-            if isinstance(dados_json, dict) and "result" in dados_json:
-                return dados_json["result"]
-                
-            return dados_json
-        except Exception as e:
-            print(f"[DEBUG] Erro crítico ao decodificar o JSON: {e}")
-            return {"balance": 0.0}
 
 class Position:
     def __init__(self):
