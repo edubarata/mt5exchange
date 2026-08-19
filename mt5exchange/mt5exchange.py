@@ -29,7 +29,6 @@ class MTrader():
             '1M'    : self.mt5.TIMEFRAME_MN1
         }
 
-
     def symbol_select(self, symbol):
         if self.log_debug: print(f"função symbol_select, input: {symbol}")
         result = self.mt5.symbol_select(symbol, True)

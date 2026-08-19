@@ -30,7 +30,6 @@ class MT5api():
         else:
             self.error = False
 
-
     def _pnl_nao_realizado(self, symbol) -> float:
         position = self.read_positions(symbol) # print -> {'type': 1, 'volume': 1.0} type = 1 Vendido, type = 0 Comprado
         print(f"========================> Position")
@@ -53,25 +52,26 @@ class MT5api():
         valor_por_ponto = self._valor_por_ponto(self.simulator.ativo)
         return self.position * (preco_atual - self.preco_medio) * valor_por_ponto
         """
+
     def symbol_select(self, symbol): #done
-        url = f"{BASE_URL}/symbol_select"
-        params = {"symbol": symbol}
-        response = requests.get(url, params=params)
+        url           = f"{BASE_URL}/symbol_select"
+        params        = {"symbol": symbol}
+        response      = requests.get(url, params=params)
         return response.json()
 
     def read_all_info(self,symbol): #done
-        url = f"{BASE_URL}/read_all_info"
-        params = {"symbol": symbol}
-        response = requests.get(url, params=params)
+        url           = f"{BASE_URL}/read_all_info"
+        params        = {"symbol": symbol}
+        response      = requests.get(url, params=params)
         if response.status_code != 200:
             return None
         data = response.json()["result"]
         return data
 
     def read_candles(self,symbol,tf,n=1): #done
-        url = f"{BASE_URL}/read_candles"
-        params = {"symbol": symbol, "tf": tf, "n": n}
-        response = requests.get(url, params=params)
+        url           = f"{BASE_URL}/read_candles"
+        params        = {"symbol": symbol, "tf": tf, "n": n}
+        response      = requests.get(url, params=params)
         response_dict = response.json()["result"]
         df = pd.DataFrame(response_dict)
         df["time"] = pd.to_datetime(df["time"])
@@ -81,9 +81,9 @@ class MT5api():
         return df
 
     def read_ticks(self,symbol,start_time,end_time):
-        url = f"{BASE_URL}/read_ticks"
-        params = {"symbol": symbol, "start_time": start_time, "end_time": end_time}
-        response = requests.get(url, params=params)
+        url           = f"{BASE_URL}/read_ticks"
+        params        = {"symbol": symbol, "start_time": start_time, "end_time": end_time}
+        response      = requests.get(url, params=params)
         response_dict = response.json()["result"]
         df = pd.DataFrame(response_dict)
         try:
@@ -95,26 +95,26 @@ class MT5api():
         return df
 
     def read_OHLC(self,symbol,tf,n=1):
-        url = f"{BASE_URL}/read_OHLC"
-        params = {"symbol": symbol, "tf": tf, "n": n}
-        response = requests.get(url, params=params)
-        df = pd.DataFrame(response.json()["result"])
-        df["time"] = pd.to_datetime(df["time"])
+        url           = f"{BASE_URL}/read_OHLC"
+        params        = {"symbol": symbol, "tf": tf, "n": n}
+        response      = requests.get(url, params=params)
+        df            = pd.DataFrame(response.json()["result"])
+        df["time"]    = pd.to_datetime(df["time"])
         df.set_index("time", inplace=True)
         return df
     
     def read_info(self,papel): #done
-        url = f"{BASE_URL}/read_info"
-        params = {"symbol": papel}
-        response = requests.get(url, params=params)
-        dados = response.json()
+        url           = f"{BASE_URL}/read_info"
+        params        = {"symbol": papel}
+        response      = requests.get(url, params=params)
+        dados         = response.json()
         return dados['ultimo_valor'], dados['preco_compra'], dados['preco_venda']
 
     def read_price_day(self,papel): #done
-        url = f"{BASE_URL}/read_price_day"
-        params = {"symbol": papel}
-        response = requests.get(url, params=params)
-        dados = response.json()
+        url           = f"{BASE_URL}/read_price_day"
+        params        = {"symbol": papel}
+        response      = requests.get(url, params=params)
+        dados         = response.json()
         return {
             'last_close'   : dados['last_close'],
             'current_open' : dados['current_open'],
@@ -122,74 +122,72 @@ class MT5api():
         }
 
     def order(self, buy_sell, symbol, volume, price):
-        url = f"{BASE_URL}/order"
-        params = {"buy_sell": buy_sell ,"symbol": symbol, "volume": volume, "price": price}
-        response = requests.get(url, params=params)
-        order_result = response.json()
+        url           = f"{BASE_URL}/order"
+        params        = {"buy_sell": buy_sell ,"symbol": symbol, "volume": volume, "price": price}
+        response      = requests.get(url, params=params)
+        order_result  = response.json()
         return order_result
 
     def get_book(self, symbol):
-        url = f"{BASE_URL}/get_book"
-        params = {"symbol": symbol}
-        response = requests.get(url, params=params)
-        book = response.json()
+        url           = f"{BASE_URL}/get_book"
+        params        = {"symbol": symbol}
+        response      = requests.get(url, params=params)
+        book          = response.json()
         return book
-
-    def read_positions(self, symbol):
-        url = f"{BASE_URL}/read_positions"
-        params = {"symbol": symbol}
-        response = requests.get(url, params=params)
-        dados = response.json()
-        return (dados)
 
     def read_position(self,symbol):
-        response = requests.get(f"{BASE_URL}/read_position", params={"symbol": symbol})
-        return response.json()
+        url           = f"{BASE_URL}/read_position"
+        params        = {"symbol": symbol}
+        response      = requests.get(url, params=params)
+        dados         = response.json()
+        return (dados)
+
+    def read_positions(self, symbol):
+        url           = f"{BASE_URL}/read_positions"
+        params        = {"symbol": symbol}
+        response      = requests.get(url, params=params)
+        dados         = response.json()
+        return (dados)
 
     def verify_position(self, symbol, position_verify):
-        url = f"{BASE_URL}/verify_position"
-        params = {"symbol": symbol, "position_verify": position_verify}
-        response = requests.get(url, params=params)
-        book = response.json()
+        url           = f"{BASE_URL}/verify_position"
+        params        = {"symbol": symbol, "position_verify": position_verify}
+        response      = requests.get(url, params=params)
+        book          = response.json()
         return book
-        if len(aux) >= 1:
-            return True,aux[0].price_open,aux[0].sl,aux[0].tp
-        return False,0,0,0
 
     def read_orders(self,ativo):
-        url = f"{BASE_URL}/read_orders"
-        params = {"symbol": ativo}
-        response = requests.get(url, params=params)
-        order = response.json()
+        url           = f"{BASE_URL}/read_orders"
+        params        = {"symbol": ativo}
+        response      = requests.get(url, params=params)
+        order         = response.json()
         return order
 
     def verify_order(self,ativo, order_verify):
-        url = f"{BASE_URL}/verify_order"
-        params = {"symbol": ativo, "order_verify": order_verify}
-        response = requests.get(url, params=params)
-        order = response.json()
+        url           = f"{BASE_URL}/verify_order"
+        params        = {"symbol": ativo, "order_verify": order_verify}
+        response      = requests.get(url, params=params)
+        order         = response.json()
         return False,0,0,0
 
     def close_orders(self, verbose=False):
-        url = f"{BASE_URL}/close_orders"
-        params = {}
-        response = requests.get(url, params=params)
-        close_result = response.json()
+        url           = f"{BASE_URL}/close_orders"
+        params        = {}
+        response      = requests.get(url, params=params)
+        close_result  = response.json()
         return close_result
 
     def get_account_info(self):
-        url = f"{BASE_URL}/get_account_info"
-        params = {}
-        response = requests.get(url)
-        dic = response.json()
-        #print(f"dic: {dic}")
-        #print(f"dic['result']: {dic['result']}")
+        url           = f"{BASE_URL}/get_account_info"
+        params        = {}
+        response      = requests.get(url)
+        dic           = response.json()
         return dic["result"]
 
     def get_account_info_teste(self):
         url = f"{BASE_URL}/get_account_info"
-        params = {}
-        response = requests.get(url)
+        params        = {}
+        response      = requests.get(url)
         print("\n[DEBUG] --- TENTANDO LER DADOS DO MT5 ---")
         print(f"[DEBUG] Status da Resposta: {response.status_code}")
         print(f"[DEBUG] Conteúdo Recebido: '{response.text}'")
@@ -211,11 +209,6 @@ class MT5api():
         except Exception as e:
             print(f"[DEBUG] Erro crítico ao decodificar o JSON: {e}")
             return {"balance": 0.0}
-
-
-
-
-
 
 class Position:
     def __init__(self):
