@@ -353,6 +353,7 @@ class MTrader():
 
     def get_account_info(self):
         info = self.mt5.account_info()
+        print(info)
         info_dict = info._asdict()
         info_dict['_pnl_nao_realizado'] = 0
         return info_dict
