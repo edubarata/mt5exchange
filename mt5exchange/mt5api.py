@@ -86,9 +86,16 @@ class MT5api():
             'current_value': dados['current_value']
         }
 
-    def order(self, buy_sell, symbol, volume, price):
+    def order(self, buy_sell, symbol, volume, price, stop=None, take=None):
         url           = f"{BASE_URL}/order"
-        params        = {"buy_sell": buy_sell ,"symbol": symbol, "volume": volume, "price": price}
+        params        = {
+            "buy_sell" : buy_sell ,
+            "symbol"   : symbol, 
+            "volume"   : volume, 
+            "price"    : price,
+            "stop"     : stop,
+            "take"     : take,
+        }
         response      = requests.get(url, params=params)
         order_result  = response.json()
         return order_result
@@ -129,13 +136,25 @@ class MT5api():
         return False,0,0,0
 
     def read_candles(self,symbol,tf,n=1): #done
-        url           = f"{BASE_URL}/read_candles"
-        params        = {"symbol": symbol, "tf": tf, "n": n}
-        response      = requests.get(url, params=params)
-        response_dict = response.json()["result"]
-        df = pd.DataFrame(response_dict)
-        df["time"] = pd.to_datetime(df["time"])
-        df["volume"] = df["volume"].astype(float)
+        url               = f"{BASE_URL}/read_candles"
+        params            = {"symbol": symbol, "tf": tf, "n": n}
+        response          = requests.get(url, params=params)
+        response_dict     = response.json()["result"]
+        df                = pd.DataFrame(response_dict)
+        df["time"]        = pd.to_datetime(df["time"])
+        df["volume"]      = df["volume"].astype(float)
+        df["tick_volume"] = df["tick_volume"].astype(float)
+        #df.set_index("time", inplace=True)
+        return df
+
+    def read_candles_from(self,symbol, tf, data, n=1):
+        url               = f"{BASE_URL}/read_candles_from"
+        params            = {"symbol": symbol, "tf": tf, "initial_date": data, "n": n}
+        response          = requests.get(url, params=params)
+        response_dict     = response.json()["result"]
+        df                = pd.DataFrame(response_dict)
+        df["time"]        = pd.to_datetime(df["time"])
+        df["volume"]      = df["volume"].astype(float)
         df["tick_volume"] = df["tick_volume"].astype(float)
         #df.set_index("time", inplace=True)
         return df

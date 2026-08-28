@@ -58,7 +58,7 @@ class MTrader():
         current_open = rates[1][1]
         return last_close, current_open, current_value
 
-    def order(self, buy_sell, symbol, volume, price=0.0):
+    def order(self, buy_sell, symbol, volume, price=0.0, stop=0.0, take=0.0):
         # 1. Verificar conexão com MT5
         if not self.mt5.initialize():
             print(f"MT5 não inicializado: {self.mt5.last_error()}")
@@ -97,16 +97,16 @@ class MTrader():
 
         if buy_sell in ['buy', 'sell']:
             order_request = {
-                "action": action_mercado,
-                "symbol": symbol,
-                "volume": float(volume),  # garantir que é float
-                "type": self.mt5.ORDER_TYPE_BUY if buy_sell == 'buy' else self.mt5.ORDER_TYPE_SELL,
-                "price": symbol_info.ask if buy_sell == 'buy' else symbol_info.bid,
-                "deviation": slippage,
-                "magic": magic_number,
-                "comment": f"mt5exchange {VERSION}",
-                "type_filling": type_filling_mercado,
-                "type_time": type_time_mercado,
+                "action"       : action_mercado,
+                "symbol"       : symbol,
+                "volume"       : float(volume),  # garantir que é float
+                "type"         : self.mt5.ORDER_TYPE_BUY if buy_sell == 'buy' else self.mt5.ORDER_TYPE_SELL,
+                "price"        : symbol_info.ask if buy_sell == 'buy' else symbol_info.bid,
+                "deviation"    : slippage,
+                "magic"        : magic_number,
+                "comment"      : f"mt5exchange {VERSION}",
+                "type_filling" : type_filling_mercado,
+                "type_time"    : type_time_mercado,
             }
         elif buy_sell in ['buy_stop', 'sell_stop']:
             order_request = {
@@ -146,6 +146,74 @@ class MTrader():
 
         return order_result
 
+    def order_ajust(self, symbol, stop=0.0, take=0.0, ticket=None):
+        # 1. Verificar conexão com MT5
+        if not self.mt5.initialize():
+            print(f"MT5 não inicializado: {self.mt5.last_error()}")
+            return None
+
+        # 2. Verificar terminal info
+        terminal = self.mt5.terminal_info()
+
+        # 3. Verificar símbolo
+        symbol_info = self.mt5.symbol_info(symbol)
+        if symbol_info is None:
+            print(f"Símbolo {symbol} não encontrado: {self.mt5.last_error()}")
+            return None
+        
+        # 4. Garantir que o símbolo está visível no Market Watch
+        if not symbol_info.visible:
+            if not self.mt5.symbol_select(symbol, True):
+                print(f"Falha ao selecionar símbolo: {self.mt5.last_error()}")
+                return None
+        slippage             = 5
+        magic_number         = 434343
+
+        action_mercado       = self.mt5.TRADE_ACTION_DEAL
+        action_stop          = self.mt5.TRADE_ACTION_PENDING
+        action_limit         = self.mt5.TRADE_ACTION_PENDING
+        
+        type_filling_mercado = self.mt5.ORDER_FILLING_IOC
+        type_filling_stop    = self.mt5.ORDER_FILLING_RETURN
+        type_filling_limit   = self.mt5.ORDER_FILLING_RETURN
+
+        type_time_mercado    = self.mt5.ORDER_TIME_GTC
+        type_time_stop       = self.mt5.ORDER_TIME_DAY
+        type_time_limit      = self.mt5.ORDER_TIME_DAY
+
+        symbol_info = self.mt5.symbol_info(symbol)
+        if ticket == None:
+            positions = self.mt5.positions_get(symbol=symbol)
+            if positions:
+                position = positions[-1]
+                ticket   = position.ticket
+                stop_loss   = stop
+                take_profit = take
+                print("Ticket:", ticket)
+                print("Preço de abertura:", position.price_open)
+                print("Type:", position.type)
+        else:
+            stop_loss   = stop
+            take_profit = take
+            
+        order_request = {
+            "action"   : self.mt5.TRADE_ACTION_SLTP,
+            "symbol"   : symbol,
+            "position" : ticket,
+            "sl"       : stop_loss,
+            "tp"       : take_profit,
+        }
+        order_result = self.mt5.order_send(order_request)
+        if order_result is None:
+            pass
+
+            erro = self.mt5.last_error()
+            print(f"order_send falhou. Código: {erro[0]}, Descrição: {erro[1]}")
+        else:
+            pass
+
+        return order_result
+
     def read_positions(self, ativo):
         position = Position()
         aux = self.mt5.positions_get(symbol=ativo)
@@ -155,7 +223,7 @@ class MTrader():
             position.time_msc        = pd.to_datetime(aux[0][2],unit='ms')
             position.time_update     = pd.to_datetime(aux[0][3],unit='ms')
             position.time_update_msc = pd.to_datetime(aux[0][4],unit='ms')
-            position.type            = aux[0][5]
+            position.type            = aux[0][5]   # definir aqui o que é type
             position.magic           = aux[0][6]
             position.identifier      = aux[0][7]
             position.reason          = aux[0][8]
@@ -247,6 +315,17 @@ class MTrader():
         except:
             df['tick_volume'] = 0
         df['time'] = pd.to_datetime(df['time'],unit='s')
+        df.drop(["spread"], axis=1,inplace=True)
+        return df
+
+    def read_candles_from(self, symbol, tf, initial_date, n):
+        timef = self.dictionary_tf[tf]
+        rates = self.mt5.copy_rates_from(symbol, timef, initial_date, n)
+        df    = pd.dataframe(rates)
+        df = df.rename({'real_volume': 'volume'}, axis=1)
+        df['volume'] = df['volume'].astype(float)
+        df['time'] = pd.to_datetime(df['time'],unit='s')
+        df.drop(["tick_volume"], axis=1,inplace=True)
         df.drop(["spread"], axis=1,inplace=True)
         return df
 

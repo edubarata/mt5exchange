@@ -59,14 +59,15 @@ def read_price_day():
 @app.route('/order',            methods=['GET'])
 def order():
     print(f"====================> /order <====================")
-    buy_sell = request.args.get("buy_sell")
-    symbol   = request.args.get("symbol")
-    volume_aux = request.args.get("volume")
-    volume   = float(volume_aux)
-    price    = float(request.args.get("price"))
+    buy_sell        = request.args.get("buy_sell")
+    symbol          = request.args.get("symbol")
+    volume          = request.args.get("volume", type=float)
+    price           = request.args.get("price",  type=float)
+    stop            = request.args.get("stop",   type=float)
+    take            = request.args.get("take",   type=float)
     symb_sel_result = conn.symbol_select(symbol)
     order_result    = conn.order(buy_sell, symbol, volume, price)
-    position = _read_positions(symbol)
+    position        = _read_positions(symbol)
     return jsonify({
         "symb_sel_result" : symb_sel_result,
         "order_result"    : order_result,
@@ -140,6 +141,19 @@ def read_candles():
     n      = int(request.args.get("n"))
     conn.symbol_select(symbol)
     resultado = conn.read_candles(symbol,tf,n)
+    resultado['time'] = resultado['time'].astype(str)
+    return jsonify({
+        "result": resultado.to_dict(orient='records')
+    })
+
+@app.route('/read_candles_from',     methods=['GET'])
+def read_candles_from():
+    symbol       = request.args.get("symbol")
+    tf           = request.args.get("tf")
+    initial_date = request.args.get("date")
+    n            = int(request.args.get("n"))
+    conn.symbol_select(symbol)
+    resultado = conn.read_candles_from(symbol, tf, initial_date, n)
     resultado['time'] = resultado['time'].astype(str)
     return jsonify({
         "result": resultado.to_dict(orient='records')
