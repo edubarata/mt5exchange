@@ -148,14 +148,16 @@ class MT5api():
         #df.set_index("time", inplace=True)
         return df
 
-    def read_candles_from(self,symbol, tf, data, n=1):
+    def read_candles_from(self,symbol, tf, initial_date, n=1):
         url               = f"{BASE_URL}/read_candles_from"
-        params            = {"symbol": symbol, "tf": tf, "initial_date": data, "n": n}
+        params            = {"symbol": symbol, "tf": tf, "initial_date": initial_date, "n": n}
         response          = requests.get(url, params=params)
         response_dict     = response.json()["result"]
         df                = pd.DataFrame(response_dict)
         df["time"]        = pd.to_datetime(df["time"])
         df["volume"]      = df["volume"].astype(float)
+        print(f"MT5api - read_candles_from - df::")
+        print(df)
         df["tick_volume"] = df["tick_volume"].astype(float)
         #df.set_index("time", inplace=True)
         return df
@@ -173,6 +175,7 @@ class MT5api():
         url           = f"{BASE_URL}/read_ticks"
         params        = {"symbol": symbol, "start_time": start_time, "end_time": end_time}
         response      = requests.get(url, params=params)
+        print(f"........................................read_ticks - response: {response}")
         response_dict = response.json()["result"]
         df = pd.DataFrame(response_dict)
         try:

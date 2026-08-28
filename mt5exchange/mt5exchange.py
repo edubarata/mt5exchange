@@ -1,5 +1,6 @@
 VERSION = "0.1.5"
 import pandas as pd
+from datetime import datetime
 
 class MTrader():
     def __init__(self,servidor,user_login,senha,verbose=True, log_debug=False):
@@ -319,9 +320,16 @@ class MTrader():
         return df
 
     def read_candles_from(self, symbol, tf, initial_date, n):
+        print(f"read_candles_from(symbol: {symbol}, tf: {tf}, initial_date: {initial_date}, n: {n})")
         timef = self.dictionary_tf[tf]
+        initial_date = datetime.strptime('2026-07-20 10:00:00', '%Y-%m-%d %H:%M:%S')
+        print(f"read_candles_from(symbol: {symbol}, timef: {timef}, initial_date: {initial_date}, n: {n})")
         rates = self.mt5.copy_rates_from(symbol, timef, initial_date, n)
-        df    = pd.dataframe(rates)
+        print(f"rates: {rates}")
+        print(f"last_error: {self.mt5.last_error()}")
+        df    = pd.DataFrame(rates)
+        print(f"df:")
+        print(df)
         df = df.rename({'real_volume': 'volume'}, axis=1)
         df['volume'] = df['volume'].astype(float)
         df['time'] = pd.to_datetime(df['time'],unit='s')
