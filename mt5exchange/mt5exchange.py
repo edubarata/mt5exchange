@@ -333,7 +333,7 @@ class MTrader():
         df = df.rename({'real_volume': 'volume'}, axis=1)
         df['volume'] = df['volume'].astype(float)
         df['time'] = pd.to_datetime(df['time'],unit='s')
-        df.drop(["tick_volume"], axis=1,inplace=True)
+        #df.drop(["tick_volume"], axis=1,inplace=True)
         df.drop(["spread"], axis=1,inplace=True)
         return df
 
