@@ -366,7 +366,7 @@ class MTrader():
         if isinstance(final_date, str):
             final_date = datetime.strptime(
                 final_date,
-                '%d-%m-%Y %H:%M:%S'
+                '%Y-%m-%d %H:%M:%S'
             )
         print(f"type(symbol)       : {type(symbol)}")
         print(f"type(timef)        : {type(timef)}")
