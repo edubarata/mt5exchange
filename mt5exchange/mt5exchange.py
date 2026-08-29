@@ -361,7 +361,7 @@ class MTrader():
         if isinstance(initial_date, str):
             initial_date = datetime.strptime(
                 initial_date,
-                '%d-%m-%Y %H:%M:%S'
+                '%Y-%m-%d %H:%M:%S'
             )
         if isinstance(final_date, str):
             final_date = datetime.strptime(
