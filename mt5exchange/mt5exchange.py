@@ -374,7 +374,8 @@ class MTrader():
         print(f"type(final_date)   : {type(final_date)}")
 
 
-        rates = self.mt5.copy_rates_range(symbol, timef, initial_date, final_date)
+        $rates = self.mt5.copy_rates_range(symbol, timef, initial_date, final_date)
+        rates = self.mt5.copy_rates_range("PETR4", 1, datetime(2026, 8, 27, 10, 0, 0), datetime(2026, 8, 27, 12, 0, 0))
         print(f"rates: {rates}")
         print(f"last_error: {self.mt5.last_error()}")
         df    = pd.DataFrame(rates)
