@@ -353,6 +353,10 @@ class MTrader():
         timef = self.dictionary_tf[tf]
         #initial_date = datetime.strptime('2026-07-20 10:00:00', '%Y-%m-%d %H:%M:%S')
         print(f"read_candles_range(symbol: {symbol}, timef: {timef}, initial_date: {initial_date}, final_date: {final_date})")
+        print(f"type(symbol)       : {type(symbol)}")
+        print(f"type(timef)        : {type(timef)}")
+        print(f"type(initial_date) : {type(initial_date)}")
+        print(f"type(final_date)   : {type(final_date)}")
         rates = self.mt5.copy_rates_range(symbol, timef, initial_date, final_date)
         print(f"rates: {rates}")
         print(f"last_error: {self.mt5.last_error()}")
