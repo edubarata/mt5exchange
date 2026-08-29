@@ -174,12 +174,13 @@ class MT5api():
         df                = pd.DataFrame(response_dict)
         print("read_candles_range print(df)")
         print(df)
-        df["time"]        = pd.to_datetime(df["time"])
-        df["volume"]      = df["volume"].astype(float)
-        print(f"MT5api - read_candles_range - df::")
-        print(df)
-        df["tick_volume"] = df["tick_volume"].astype(float)
-        #df.set_index("time", inplace=True)
+        if not df.empty:
+            df["time"]        = pd.to_datetime(df["time"])
+            df["volume"]      = df["volume"].astype(float)
+            print(f"MT5api - read_candles_range - df::")
+            print(df)
+            df["tick_volume"] = df["tick_volume"].astype(float)
+            #df.set_index("time", inplace=True)
         return df
 
     def read_OHLC(self,symbol,tf,n=1):
