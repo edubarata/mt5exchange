@@ -358,8 +358,8 @@ class MTrader():
         tz = ZoneInfo(input_tz)
 
         # 1) trata a entrada: localiza o horário "do usuário" no fuso dele e converte pra UTC
-        initial_utc = initial_date #.replace(tzinfo=tz).astimezone(ZoneInfo('UTC')).replace(tzinfo=None)
-        final_utc   =   final_date #.replace(tzinfo=tz).astimezone(ZoneInfo('UTC')).replace(tzinfo=None)
+        initial_utc = initial_date.replace(tzinfo=tz).astimezone(ZoneInfo('UTC')).replace(tzinfo=None)
+        final_utc   =   final_date.replace(tzinfo=tz).astimezone(ZoneInfo('UTC')).replace(tzinfo=None)
 
         tf_int = self.dictionary_tf[tf]
         #initial_date = datetime.strptime('2026-07-20 10:00:00', '%Y-%m-%d %H:%M:%S')
