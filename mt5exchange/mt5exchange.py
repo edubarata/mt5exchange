@@ -358,8 +358,8 @@ class MTrader():
         tz = ZoneInfo(input_tz)
 
         # 1) trata a entrada: localiza o horário "do usuário" no fuso dele e converte pra UTC
-        initial_utc = initial_date.replace(tzinfo=tz).astimezone(ZoneInfo('UTC')).replace(tzinfo=None)
-        final_utc   =   final_date.replace(tzinfo=tz).astimezone(ZoneInfo('UTC')).replace(tzinfo=None)
+        initial_utc = initial_date #.replace(tzinfo=tz).astimezone(ZoneInfo('UTC')).replace(tzinfo=None)
+        final_utc   =   final_date #.replace(tzinfo=tz).astimezone(ZoneInfo('UTC')).replace(tzinfo=None)
 
         tf_int = self.dictionary_tf[tf]
         #initial_date = datetime.strptime('2026-07-20 10:00:00', '%Y-%m-%d %H:%M:%S')
@@ -379,8 +379,8 @@ class MTrader():
         df['volume'] = df['volume'].astype(float)
         df['time'] = pd.to_datetime(df['time'],unit='s')
         # 2) trata a saída: epoch -> UTC tz-aware -> converte de volta pro fuso do usuário
-        df['time'] = pd.to_datetime(df['time'], unit='s', utc=True).dt.tz_convert(input_tz).dt.tz_localize(None)
-        #df['time'] = df['time'].astype(str)
+        #df['time'] = pd.to_datetime(df['time'], unit='s', utc=True).dt.tz_convert(input_tz).dt.tz_localize(None)
+        df['time'] = df['time'].astype(str)
         #df.drop(["tick_volume"], axis=1,inplace=True)
         df.drop(["spread"], axis=1,inplace=True)
         print(f"======== read_candles_range - df:")
