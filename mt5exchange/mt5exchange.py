@@ -368,6 +368,8 @@ class MTrader():
         print(f"type(tf_int)       : {type(tf_int)},       tf_int:       {tf_int}")
         print(f"type(initial_date) : {type(initial_date)}, initial_date: {initial_date}")
         print(f"type(final_date)   : {type(final_date)},   final_date:   {final_date}")
+        print(f"type(initial_utc)  : {type(initial_utc)},  initial_utc:  {initial_utc}")
+        print(f"type(final_utc)    : {type(final_utc)},    final_utc:    {final_utc}")
         rates = self.mt5.copy_rates_range(symbol, tf_int, initial_utc, final_utc)
         #rates = self.mt5.copy_rates_range("PETR4", 1, datetime(2026, 8, 27, 10, 0, 0), datetime(2026, 8, 27, 12, 0, 0))
         #print(f"rates: {rates}")
