@@ -173,6 +173,8 @@ class MT5api():
         response          = requests.get(url, params=params)
         response_dict     = response.json()["result"]
         df                = pd.DataFrame(response_dict)
+        priknt("read_candles_range print(df)")
+        print(df)
         df["time"]        = pd.to_datetime(df["time"])
         df["volume"]      = df["volume"].astype(float)
         print(f"MT5api - read_candles_range - df::")
