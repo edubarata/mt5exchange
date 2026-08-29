@@ -362,16 +362,17 @@ class MTrader():
         print(f"type(final_date)   : {type(final_date)},   final_date:   {final_date}")
         rates = self.mt5.copy_rates_range(symbol, tf_int, initial_date, final_date)
         #rates = self.mt5.copy_rates_range("PETR4", 1, datetime(2026, 8, 27, 10, 0, 0), datetime(2026, 8, 27, 12, 0, 0))
-        print(f"rates: {rates}")
+        #print(f"rates: {rates}")
         print(f"last_error: {self.mt5.last_error()}")
         df    = pd.DataFrame(rates)
-        print(f"df:")
-        print(df)
         df = df.rename({'real_volume': 'volume'}, axis=1)
         df['volume'] = df['volume'].astype(float)
         df['time'] = pd.to_datetime(df['time'],unit='s')
+        df['time'] = df['time'].astype(str)
         #df.drop(["tick_volume"], axis=1,inplace=True)
         df.drop(["spread"], axis=1,inplace=True)
+        print(f"======== read_candles_range - df:")
+        print(df)
         return df
 
     def read_OHLC(self,symbol,tf,n=1):

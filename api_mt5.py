@@ -170,7 +170,6 @@ def read_candles_range():
     final_date        = datetime.strptime(final_date, "%Y-%m-%d %H:%M:%S")
     conn.symbol_select(symbol)
     resultado         = conn.read_candles_range(symbol, tf, initial_date, final_date)
-    resultado['time'] = resultado['time'].astype(str)
     print(f"/read_candles_range - resultado: {resultado}")
     return jsonify({
         "result": resultado.to_dict(orient='records')
