@@ -357,6 +357,23 @@ class MTrader():
         print(f"type(timef)        : {type(timef)}")
         print(f"type(initial_date) : {type(initial_date)}")
         print(f"type(final_date)   : {type(final_date)}")
+
+        if isinstance(initial_date, str):
+            initial_date = datetime.strptime(
+                initial_date,
+                '%d-%m-%Y %H:%M:%S'
+            )
+        if isinstance(final_date, str):
+            final_date = datetime.strptime(
+                final_date,
+                '%d-%m-%Y %H:%M:%S'
+            )
+        print(f"type(symbol)       : {type(symbol)}")
+        print(f"type(timef)        : {type(timef)}")
+        print(f"type(initial_date) : {type(initial_date)}")
+        print(f"type(final_date)   : {type(final_date)}")
+
+
         rates = self.mt5.copy_rates_range(symbol, timef, initial_date, final_date)
         print(f"rates: {rates}")
         print(f"last_error: {self.mt5.last_error()}")
