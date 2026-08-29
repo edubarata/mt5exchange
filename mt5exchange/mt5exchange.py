@@ -336,11 +336,16 @@ class MTrader():
         #initial_date = datetime.strptime('2026-07-20 10:00:00', '%Y-%m-%d %H:%M:%S')
         print(f"read_candles_from(symbol: {symbol}, timef: {timef}, initial_date: {initial_date}, n: {n})")
         rates = self.mt5.copy_rates_from(symbol, timef, initial_date, n)
+<<<<<<< Updated upstream
         print(f"rates: {rates}")
         print(f"last_error: {self.mt5.last_error()}")
         df    = pd.DataFrame(rates)
         print(f"df:")
         print(df)
+=======
+        print(f"====> rates: {rates} = self.mt5.copy_rates_from(symbol={symbol}, timef={timef}, initial_date={initial_date}, n={n})")
+        df    = pd.dataframe(rates)
+>>>>>>> Stashed changes
         df = df.rename({'real_volume': 'volume'}, axis=1)
         df['volume'] = df['volume'].astype(float)
         df['time'] = pd.to_datetime(df['time'],unit='s')

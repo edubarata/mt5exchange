@@ -139,7 +139,6 @@ class MT5api():
         url               = f"{BASE_URL}/read_candles"
         params            = {"symbol": symbol, "tf": tf, "n": n}
         response          = requests.get(url, params=params)
-        print(f"====> response: {response}")
         response_dict     = response.json()["result"]
         df                = pd.DataFrame(response_dict)
         df["time"]        = pd.to_datetime(df["time"])
