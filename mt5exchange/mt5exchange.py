@@ -1,6 +1,6 @@
 VERSION = "0.1.5"
 import pandas as pd
-from datetime import datetime
+from datetime import datetime, timedelta
 
 class MTrader():
     def __init__(self,servidor,user_login,senha,verbose=True, log_debug=False):
@@ -306,17 +306,17 @@ class MTrader():
         n_blocos = n//tamanho_bloco
         residual = n % tamanho_bloco
         n = n + 1
-        timef = self.dictionary_tf[tf]
+        tf_int = self.dictionary_tf[tf]
         if n_blocos>0:
-            df = pd.DataFrame(self.mt5.copy_rates_from_pos(symbol, timef, (n_blocos-1)*tamanho_bloco+residual, tamanho_bloco))
+            df = pd.DataFrame(self.mt5.copy_rates_from_pos(symbol, tf_int, (n_blocos-1)*tamanho_bloco+residual, tamanho_bloco))
             for i in range(n_blocos-1):
-                df_aux = pd.DataFrame(self.mt5.copy_rates_from_pos(symbol, timef, (n_blocos-2-i)*tamanho_bloco+residual, tamanho_bloco))
+                df_aux = pd.DataFrame(self.mt5.copy_rates_from_pos(symbol, tf_int, (n_blocos-2-i)*tamanho_bloco+residual, tamanho_bloco))
                 df = pd.concat([df,df_aux])
             if residual>0:
-                df_aux = pd.DataFrame(self.mt5.copy_rates_from_pos(symbol, timef, 0, residual))
+                df_aux = pd.DataFrame(self.mt5.copy_rates_from_pos(symbol, tf_int, 0, residual))
                 df = pd.concat([df,df_aux])
         else:
-            df = pd.DataFrame(self.mt5.copy_rates_from_pos(symbol, timef, 0, residual))
+            df = pd.DataFrame(self.mt5.copy_rates_from_pos(symbol, tf_int, 0, residual))
         df = df.rename({'real_volume': 'volume'}, axis=1)
         try:
             df['volume'] = df['volume'].astype(float)
@@ -332,16 +332,16 @@ class MTrader():
 
     def read_candles_from(self, symbol, tf, initial_date, n):
         print(f"read_candles_from(symbol: {symbol}, tf: {tf}, initial_date: {initial_date}, n: {n})")
-        timef = self.dictionary_tf[tf]
+        tf_int = self.dictionary_tf[tf]
         #initial_date = datetime.strptime('2026-07-20 10:00:00', '%Y-%m-%d %H:%M:%S')
-        print(f"read_candles_from(symbol: {symbol}, timef: {timef}, initial_date: {initial_date}, n: {n})")
-        rates = self.mt5.copy_rates_from(symbol, timef, initial_date, n)
+        print(f"read_candles_from(symbol: {symbol}, tf_int: {tf_int}, initial_date: {initial_date}, n: {n})")
+        rates = self.mt5.copy_rates_from(symbol, tf_int, initial_date, n)
         print(f"rates: {rates}")
         print(f"last_error: {self.mt5.last_error()}")
         df    = pd.DataFrame(rates)
         print(f"df:")
         print(df)
-        print(f"====> rates: {rates} = self.mt5.copy_rates_from(symbol={symbol}, timef={timef}, initial_date={initial_date}, n={n})")
+        print(f"====> rates: {rates} = self.mt5.copy_rates_from(symbol={symbol}, tf_int={tf_int}, initial_date={initial_date}, n={n})")
         df    = pd.dataframe(rates)
         df = df.rename({'real_volume': 'volume'}, axis=1)
         df['volume'] = df['volume'].astype(float)
@@ -352,15 +352,15 @@ class MTrader():
 
     def read_candles_range(self, symbol, tf, initial_date, final_date):
         print(f"read_candles_range(symbol: {symbol}, tf: {tf}, initial_date: {initial_date}, final_date: {final_date})")
-        timef = self.dictionary_tf[tf]
+        tf_int = self.dictionary_tf[tf]
         #initial_date = datetime.strptime('2026-07-20 10:00:00', '%Y-%m-%d %H:%M:%S')
-        print(f"read_candles_range(symbol: {symbol}, timef: {timef}, initial_date: {initial_date}, final_date: {final_date})")
-        print(f"type(symbol)       : {type(symbol)}")
-        print(f"type(timef)        : {type(timef)}")
-        print(f"type(initial_date) : {type(initial_date)}")
-        print(f"type(final_date)   : {type(final_date)}")
-
-        rates = self.mt5.copy_rates_range(symbol, timef, initial_date, final_date)
+        final_date = final_date - timedelta(minutes=1)
+        print(f"read_candles_range(symbol: {symbol}, tf_int: {tf_int}, initial_date: {initial_date}, final_date: {final_date})")
+        print(f"type(symbol)       : {type(symbol)},       symbol:       {symbol}")
+        print(f"type(tf_int)       : {type(tf_int)},       tf_int:       {tf_int}")
+        print(f"type(initial_date) : {type(initial_date)}, initial_date: {initial_date}")
+        print(f"type(final_date)   : {type(final_date)},   final_date:   {final_date}")
+        rates = self.mt5.copy_rates_range(symbol, tf_int, initial_date, final_date)
         #rates = self.mt5.copy_rates_range("PETR4", 1, datetime(2026, 8, 27, 10, 0, 0), datetime(2026, 8, 27, 12, 0, 0))
         print(f"rates: {rates}")
         print(f"last_error: {self.mt5.last_error()}")
@@ -381,8 +381,8 @@ class MTrader():
         # n = 1 (last closed candle)
         # n = 2.. (las 2.. closed candles)
         n = n + 1
-        timef = self.dictionary_tf[tf]
-        df = pd.DataFrame(self.mt5.copy_rates_from_pos(symbol, timef, 0, n))
+        tf_int = self.dictionary_tf[tf]
+        df = pd.DataFrame(self.mt5.copy_rates_from_pos(symbol, tf_int, 0, n))
         df = df.rename({'real_volume': 'volume'}, axis=1)
         df['volume'] = df['volume'].astype(float)
         df['time'] = pd.to_datetime(df['time'],unit='s')
