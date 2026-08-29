@@ -160,6 +160,20 @@ def read_candles_from():
         "result": resultado.to_dict(orient='records')
     })
 
+@app.route('/read_candles_range',     methods=['GET'])
+def read_candles_range():
+    symbol       =     request.args.get("symbol")
+    tf           =     request.args.get("tf")
+    initial_date =     request.args.get("initial_date")
+    final_date   = int(request.args.get("final_date"))
+    conn.symbol_select(symbol)
+    resultado = conn.read_candles_range(symbol, tf, initial_date, final_date)
+    resultado['time'] = resultado['time'].astype(str)
+    print(f"/read_candles_range - resultado: {resultado}")
+    return jsonify({
+        "result": resultado.to_dict(orient='records')
+    })
+
 @app.route('/read_OHLC',        methods=['GET'])
 def read_OHLC():
     symbol = request.args.get("symbol")

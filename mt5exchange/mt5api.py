@@ -162,6 +162,25 @@ class MT5api():
         #df.set_index("time", inplace=True)
         return df
 
+    def read_candles_range(self,symbol, tf, initial_date, final_date):
+        url               = f"{BASE_URL}/read_candles_range"
+        params            = {
+            "symbol": symbol, 
+            "tf": tf, 
+            "initial_date": initial_date, 
+            "final_date": final_date
+        }
+        response          = requests.get(url, params=params)
+        response_dict     = response.json()["result"]
+        df                = pd.DataFrame(response_dict)
+        df["time"]        = pd.to_datetime(df["time"])
+        df["volume"]      = df["volume"].astype(float)
+        print(f"MT5api - read_candles_range - df::")
+        print(df)
+        df["tick_volume"] = df["tick_volume"].astype(float)
+        #df.set_index("time", inplace=True)
+        return df
+
     def read_OHLC(self,symbol,tf,n=1):
         url           = f"{BASE_URL}/read_OHLC"
         params        = {"symbol": symbol, "tf": tf, "n": n}

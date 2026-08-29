@@ -21,10 +21,21 @@ class MTrader():
         self.dictionary_tf = {
             '1m'    : self.mt5.TIMEFRAME_M1,
             '2m'    : self.mt5.TIMEFRAME_M2,
+            '3m'    : self.mt5.TIMEFRAME_M3,
+            '4m'    : self.mt5.TIMEFRAME_M4,
             '5m'    : self.mt5.TIMEFRAME_M5,
+            '6m'    : self.mt5.TIMEFRAME_M6,
+            '10m'   : self.mt5.TIMEFRAME_M10,
+            '12m'   : self.mt5.TIMEFRAME_M12,
             '15m'   : self.mt5.TIMEFRAME_M15,
+            '20m'   : self.mt5.TIMEFRAME_M20,
             '30m'   : self.mt5.TIMEFRAME_M30,
             '1h'    : self.mt5.TIMEFRAME_H1,
+            '2h'    : self.mt5.TIMEFRAME_H2,
+            '3h'    : self.mt5.TIMEFRAME_H3,
+            '4h'    : self.mt5.TIMEFRAME_H4,
+            '8h'    : self.mt5.TIMEFRAME_H8,
+            '12h'   : self.mt5.TIMEFRAME_H12,
             '1d'    : self.mt5.TIMEFRAME_D1,
             '1w'    : self.mt5.TIMEFRAME_W1,
             '1M'    : self.mt5.TIMEFRAME_MN1
@@ -322,9 +333,27 @@ class MTrader():
     def read_candles_from(self, symbol, tf, initial_date, n):
         print(f"read_candles_from(symbol: {symbol}, tf: {tf}, initial_date: {initial_date}, n: {n})")
         timef = self.dictionary_tf[tf]
-        initial_date = datetime.strptime('2026-07-20 10:00:00', '%Y-%m-%d %H:%M:%S')
+        #initial_date = datetime.strptime('2026-07-20 10:00:00', '%Y-%m-%d %H:%M:%S')
         print(f"read_candles_from(symbol: {symbol}, timef: {timef}, initial_date: {initial_date}, n: {n})")
         rates = self.mt5.copy_rates_from(symbol, timef, initial_date, n)
+        print(f"rates: {rates}")
+        print(f"last_error: {self.mt5.last_error()}")
+        df    = pd.DataFrame(rates)
+        print(f"df:")
+        print(df)
+        df = df.rename({'real_volume': 'volume'}, axis=1)
+        df['volume'] = df['volume'].astype(float)
+        df['time'] = pd.to_datetime(df['time'],unit='s')
+        #df.drop(["tick_volume"], axis=1,inplace=True)
+        df.drop(["spread"], axis=1,inplace=True)
+        return df
+
+    def read_candles_range(self, symbol, tf, initial_date, final_date):
+        print(f"read_candles_range(symbol: {symbol}, tf: {tf}, initial_date: {initial_date}, final_date: {final_date})")
+        timef = self.dictionary_tf[tf]
+        #initial_date = datetime.strptime('2026-07-20 10:00:00', '%Y-%m-%d %H:%M:%S')
+        print(f"read_candles_range(symbol: {symbol}, timef: {timef}, initial_date: {initial_date}, final_date: {final_date})")
+        rates = self.mt5.copy_rates_range(symbol, timef, initial_date, final_date)
         print(f"rates: {rates}")
         print(f"last_error: {self.mt5.last_error()}")
         df    = pd.DataFrame(rates)
