@@ -165,10 +165,10 @@ class MT5api():
     def read_candles_range(self,symbol, tf, initial_date, final_date):
         url               = f"{BASE_URL}/read_candles_range"
         params            = {
-            "symbol": symbol, 
-            "tf": tf, 
-            "initial_date": initial_date, 
-            "final_date": final_date
+            "symbol"       : symbol, 
+            "tf"           : tf, 
+            "initial_date" : initial_date.strftime("%Y-%m-%d %H:%M:%S"),
+            "final_date"   : final_date.strftime("%Y-%m-%d %H:%M:%S")
         }
         response          = requests.get(url, params=params)
         response_dict     = response.json()["result"]

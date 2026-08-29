@@ -166,6 +166,14 @@ def read_candles_range():
     tf           = request.args.get("tf")
     initial_date = request.args.get("initial_date")
     final_date   = request.args.get("final_date")
+    initial_date = datetime.strptime(
+        initial_date,
+        "%Y-%m-%d %H:%M:%S"
+    )
+    final_date = datetime.strptime(
+        final_date,
+        "%Y-%m-%d %H:%M:%S"
+    )
     conn.symbol_select(symbol)
     resultado = conn.read_candles_range(symbol, tf, initial_date, final_date)
     resultado['time'] = resultado['time'].astype(str)
