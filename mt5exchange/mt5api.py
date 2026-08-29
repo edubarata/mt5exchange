@@ -32,13 +32,9 @@ class MT5api():
 
     def _pnl_nao_realizado(self, symbol) -> float:
         position = self.read_positions(symbol) # print -> {'type': 1, 'volume': 1.0} type = 1 Vendido, type = 0 Comprado
-        print(f"========================> Position")
-        print(position)
         if position['volume'] == 0: # self.position da classe MT5Simulator: -1 Vendido, 0 Líquido, 1 Comprado
             return 0.0
         info = self.read_info(symbol)  # print -> 'info: (176460.0, 176465.0, 176460.0)' (last, bid, ask)
-        print(f"info: {info}")
-        print(f"info[1]: {info[1]}")
         if position['type'] == 0:
             preco_atual = info[2]
         else:
@@ -155,8 +151,6 @@ class MT5api():
         df                = pd.DataFrame(response_dict)
         df["time"]        = pd.to_datetime(df["time"])
         df["volume"]      = df["volume"].astype(float)
-        print(f"MT5api - read_candles_from - df::")
-        print(df)
         df["tick_volume"] = df["tick_volume"].astype(float)
         #df.set_index("time", inplace=True)
         return df
@@ -172,13 +166,9 @@ class MT5api():
         response          = requests.get(url, params=params)
         response_dict     = response.json()["result"]
         df                = pd.DataFrame(response_dict)
-        print("read_candles_range print(df)")
-        print(df)
         if not df.empty:
             df["time"]        = pd.to_datetime(df["time"])
             df["volume"]      = df["volume"].astype(float)
-            print(f"MT5api - read_candles_range - df::")
-            print(df)
             df["tick_volume"] = df["tick_volume"].astype(float)
             #df.set_index("time", inplace=True)
         return df
@@ -196,7 +186,6 @@ class MT5api():
         url           = f"{BASE_URL}/read_ticks"
         params        = {"symbol": symbol, "start_time": start_time, "end_time": end_time}
         response      = requests.get(url, params=params)
-        print(f"........................................read_ticks - response: {response}")
         response_dict = response.json()["result"]
         df = pd.DataFrame(response_dict)
         try:
