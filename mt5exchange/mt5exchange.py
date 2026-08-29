@@ -337,12 +337,15 @@ class MTrader():
         print(f"read_candles_from(symbol: {symbol}, timef: {timef}, initial_date: {initial_date}, n: {n})")
         rates = self.mt5.copy_rates_from(symbol, timef, initial_date, n)
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
         print(f"rates: {rates}")
         print(f"last_error: {self.mt5.last_error()}")
         df    = pd.DataFrame(rates)
         print(f"df:")
         print(df)
 =======
+=======
+>>>>>>> Stashed changes
         print(f"====> rates: {rates} = self.mt5.copy_rates_from(symbol={symbol}, timef={timef}, initial_date={initial_date}, n={n})")
         df    = pd.dataframe(rates)
 >>>>>>> Stashed changes
