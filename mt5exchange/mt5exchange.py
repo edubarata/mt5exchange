@@ -332,17 +332,9 @@ class MTrader():
         return df
 
     def read_candles_from(self, symbol, tf, initial_date, n):
-        print(f"read_candles_from(symbol: {symbol}, tf: {tf}, initial_date: {initial_date}, n: {n})")
         tf_int = self.dictionary_tf[tf]
-        #initial_date = datetime.strptime('2026-07-20 10:00:00', '%Y-%m-%d %H:%M:%S')
-        print(f"read_candles_from(symbol: {symbol}, tf_int: {tf_int}, initial_date: {initial_date}, n: {n})")
         rates = self.mt5.copy_rates_from(symbol, tf_int, initial_date, n)
-        print(f"rates: {rates}")
-        print(f"last_error: {self.mt5.last_error()}")
         df    = pd.DataFrame(rates)
-        print(f"df:")
-        print(df)
-        print(f"====> rates: {rates} = self.mt5.copy_rates_from(symbol={symbol}, tf_int={tf_int}, initial_date={initial_date}, n={n})")
         df    = pd.dataframe(rates)
         df = df.rename({'real_volume': 'volume'}, axis=1)
         df['volume'] = df['volume'].astype(float)
@@ -354,38 +346,20 @@ class MTrader():
 
 
     def read_candles_range(self, symbol, tf, initial_date, final_date, input_tz='America/Sao_Paulo'):
-        final_date = final_date - timedelta(minutes=1)
-        tz = ZoneInfo(input_tz)
-        offset = tz.utcoffset(initial_date)
-
-
-        # 1) trata a entrada: localiza o horário "do usuário" no fuso dele e converte pra UTC
+        final_date    = final_date - timedelta(minutes=1)
+        tz            = ZoneInfo(input_tz)
+        offset        = tz.utcoffset(initial_date)
         initial_query = initial_date + offset
         final_query   = final_date   + offset
-
-        tf_int = self.dictionary_tf[tf]
-        #initial_date = datetime.strptime('2026-07-20 10:00:00', '%Y-%m-%d %H:%M:%S')
-        print(f"read_candles_range(symbol: {symbol}, tf_int: {tf_int}, initial_date: {initial_date}, final_date: {final_date})")
-        print(f"type(symbol)        : {type(symbol)},        symbol:       {symbol}")
-        print(f"type(tf_int)        : {type(tf_int)},        tf_int:       {tf_int}")
-        print(f"type(initial_date)  : {type(initial_date)},  initial_date: {initial_date}")
-        print(f"type(final_date)    : {type(final_date)},    final_date:   {final_date}")
-        print(f"type(initial_query) : {type(initial_query)}, initial_utc:  {initial_query}")
-        print(f"type(final_query)   : {type(final_query)},   final_utc:    {final_query}")
-        rates = self.mt5.copy_rates_range(symbol, tf_int, initial_query, final_query)
-        #rates = self.mt5.copy_rates_range("PETR4", 1, datetime(2026, 8, 27, 10, 0, 0), datetime(2026, 8, 27, 12, 0, 0))
-        #print(f"rates: {rates}")
-        print(f"last_error: {self.mt5.last_error()}")
-        df    = pd.DataFrame(rates)
-        df = df.rename({'real_volume': 'volume'}, axis=1)
-        df['volume'] = df['volume'].astype(float)
-        df['time'] = pd.to_datetime(df['time'],unit='s')
-        # 2) trata a saída: epoch -> UTC tz-aware -> converte de volta pro fuso do usuário
-        #df['time'] = pd.to_datetime(df['time'], unit='s', utc=True).dt.tz_convert(input_tz).dt.tz_localize(None)
-        df['time'] = df['time'].astype(str)
-        #df.drop(["tick_volume"], axis=1,inplace=True)
+        tf_int        = self.dictionary_tf[tf]
+        rates         = self.mt5.copy_rates_range(symbol, tf_int, initial_query, final_query)
+        df            = pd.DataFrame(rates)
+        df            = df.rename({'real_volume': 'volume'}, axis=1)
+        df['volume']  = df['volume'].astype(float)
+        df['time']    = pd.to_datetime(df['time'],unit='s')
+        df['time']    = df['time'].astype(str)
         df.drop(["spread"], axis=1,inplace=True)
-        print(f"======== read_candles_range - df:")
+        print(f"read_candles_range(symbol={symbol}, tf={tf}, initial_date={initial_date}, final_date={final_date}, input_tz='America/Sao_Paulo')")
         print(df)
         return df
 
