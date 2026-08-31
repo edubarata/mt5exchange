@@ -5,11 +5,8 @@ from passwords import mt5_Genial_SwingTrade_password
 from passwords import mt5_infinox_live
 from mt5exchange.mt5exchange import MTrader
 
-
-
-
-
 server,login,password = mt5_Genial_SwingTrade_password()
+print(f"teste")
 conn = MTrader(server,login,password)
 
 code = 'PETR4'
